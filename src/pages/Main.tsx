@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react'
-import { useStarkBlocksQuery } from '../queries/starkware';
+import { useStarkBlocksQuery } from '../queries/starkNet';
 import { useEthBlocksQuery } from '../queries/ethereum';
 import { TpbPanel } from '../components/Tpb'
 import { TpsPanel } from '../components/Tps'

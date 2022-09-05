@@ -24,6 +24,7 @@
     "web3": "^1.7.5"
   },
   "devDependencies": {
+    "@types/numeral": "^2.0.2",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^2.0.1",

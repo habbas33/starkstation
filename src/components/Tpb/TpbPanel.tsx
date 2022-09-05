@@ -18,7 +18,7 @@ export default function TpbPanel(props: {
                 time: number;
                 txnCount: number;
             }[] = [];
-            Object.keys(data).forEach((k:string) => {
+            Object.keys(data).forEach((k:any) => {
                 tpb_data[k] = {
                 time: data[k].timestamp, 
                 txnCount: data[k].txnCount,

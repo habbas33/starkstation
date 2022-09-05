@@ -49,7 +49,7 @@ export default function DistributionPanel(props: {
         let latency_values:  number[]=[];
 
         if (Object.keys(data).length >0) {
-            Object.keys(data).forEach((k:string) => {
+            Object.keys(data).forEach((k:any) => {
                 if (Number(k) < Object.keys(data).length -2){
                     const time_taken = dayjs(data[k].timestamp).diff(dayjs(data[Number(k)+1].timestamp),'seconds');
                     latency_values[k] = time_taken;

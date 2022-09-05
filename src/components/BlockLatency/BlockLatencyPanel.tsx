@@ -29,7 +29,6 @@ export default function BlockLatencyPanel(props: {
                 }
             });
         }
-        // console.log(JSON.stringify(blockLatency_data))
         return blockLatency_data}, [data]);
 
     useEffect(() => {

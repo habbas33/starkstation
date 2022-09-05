@@ -16,7 +16,7 @@ export default function TpsChart(props: {
   return (
     <div className={`h-60 drop-shadow-xl w-full ${chain==="ethereum" ? "bg-cyan-900":"bg-cyan-900"} rounded-3xl rounded-2xl p-5 self-end`}>
         <div className="flex justify-between items-center">
-            <h1 className="text-gray-300 text-sm"> {chain==="ethereum"?"Ethereum":"Starkware"}</h1>
+            <h1 className="text-gray-300 text-sm"> {chain==="ethereum"?"Ethereum":"StarkNet"}</h1>
             <div className="flex justify-between items-center">
                 <h1 className="text-gray-300 text-sm"> Average TPS (last 50 blocks):</h1>
                 <h1 className="text-gray-200 font-semibold text-sm pl-1">{isNaN(avgTps)?"":avgTps.toFixed(4)}</h1>

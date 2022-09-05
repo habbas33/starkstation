@@ -74,13 +74,6 @@ export default function DistributionPanel(props: {
     useEffect(() => {
         if (data && Object.keys(distribution_dataM).length>0) {
             const sortedDistribution = distribution_dataM.sort((a:any,b:any)=> a.value-b.value)
-            console.log("sortedDistribution",sortedDistribution)
-            console.log("distribution_dataM",distribution_dataM)
-            // const ids = sortedDistribution.map(o => o.normalDensityZx)
-            // const ids = sortedDistribution.map(o => o.value)
-            // const filtered = sortedDistribution.filter(({value}, index) => !ids.includes(value, index + 1))
-            // console.log("zx",ids);
-            // console.log("value",idss);
             setDistributionData(sortedDistribution)
         }
     }, [data])

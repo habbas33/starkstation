@@ -49,25 +49,25 @@ const Main: React.FC = () => {
       <div className="py-10">
         <h1 className="text-white text-center pt-8 pb-2">Transactions Per Block (TPB) </h1>
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
-          <TpbPanel isLoading={stark_Loading} data={starkData} chain={"starkware"}/>
+          <TpbPanel isLoading={stark_Loading} data={starkData} chain={"starkNet"}/>
           <TpbPanel isLoading={isEthLoading} data={ethData} chain={"ethereum"}/>
         </div>
         
         <h1 onClick={clickHandle} className="text-white text-center pt-8 pb-2">Transactions Per Second (TPS) </h1>
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
-          <TpsPanel isLoading={stark_Loading} data={starkData} chain={"starkware"}/>
+          <TpsPanel isLoading={stark_Loading} data={starkData} chain={"starkNet"}/>
           <TpsPanel isLoading={isEthLoading} data={ethData} chain={"ethereum"}/>
         </div>
 
         <h1 onClick={clickHandle} className="text-white text-center pt-8 pb-2">BlockLatency (in sec) </h1>
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
-          <BlockLatencyPanel isLoading={stark_Loading} data={starkData} chain={"starkware"}/>
+          <BlockLatencyPanel isLoading={stark_Loading} data={starkData} chain={"starkNet"}/>
           <BlockLatencyPanel isLoading={isEthLoading} data={ethData} chain={"ethereum"}/>
         </div>
         
         <h1 onClick={clickHandle} className="text-white text-center pt-8 pb-2">Normal Distribution</h1>
         <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
-          <DistributionPanel isLoading={stark_Loading} data={starkData} chain={"starkware"}/>
+          <DistributionPanel isLoading={stark_Loading} data={starkData} chain={"starkNet"}/>
           <DistributionPanel isLoading={isEthLoading} data={ethData} chain={"ethereum"}/>
         </div>
       </div>

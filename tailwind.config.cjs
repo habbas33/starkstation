@@ -1,13 +1,18 @@
 module.exports = {
   purge: ["./src/**/*.{js,jsx,ts,tsx}", "./src/index.html"],
   mode: "jit",
-  darkMode: false, // or 'media' or 'class'
+  darkMode: 'media', // or 'media' or 'class'
   theme: {
     fontFamily: {
       display: ["Open Sans", "sans-serif"],
       body: ["Open Sans", "sans-serif"],
     },
     extend: {
+      colors: {
+        'box': '#081128',
+        'box-active':'#0c1c42',
+        'box-hover':'#0d1b3d'
+      },
       screens: {
         mf: "990px",
       },

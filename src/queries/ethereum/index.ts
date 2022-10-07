@@ -2,6 +2,7 @@ import {ethers} from 'ethers';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 const APIKEY = import.meta.env.INFURA_API;
+import { STARKSTAION_API_ENDPOINT } from '../../constants/globals';
 
 export const useEthBlocksQuery = () => {
     const provider = new ethers.providers.InfuraProvider(
@@ -25,10 +26,24 @@ export const useEthBlocksQuery = () => {
             });
         }) 
       } 
-      // blocks[0] = {timestamp:currentBlock["timestamp"]*1000 ,txnCount:currentBlock.transactions.length};
-      // console.log("done",blocks)
       return blocks;
     }
   
     return useQuery<{ [key in string]: {timestamp:number,txnCount:number} }>('useEthBlocksQuery', fetch);
+  };
+
+  export const useEthDetailQuery4h = () => {
+    const fetch = async () => {
+      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/detail?period=4h`);
+      return data;
+    };
+    return useQuery<{ [key in string]: any }>('useEthDetailQuery4h', fetch);
+  };
+
+  export const useEthDetailQuery1d = () => {
+    const fetch = async () => {
+      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/detail?period=24h`);
+      return data;
+    };
+    return useQuery<{ [key in string]: any }>('useEthDetailQuery1d', fetch);
   };

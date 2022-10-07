@@ -1,78 +1,56 @@
 import React, {useContext, useState, useEffect} from 'react'
-import { useStarkBlocksQuery } from '../queries/starkNet';
-import { useEthBlocksQuery } from '../queries/ethereum';
-import { TpbPanel } from '../components/Tpb'
-import { TpsPanel } from '../components/Tps'
-import { BlockLatencyPanel } from '../components/BlockLatency'
-import { DistributionPanel } from '../components/Distribution'
+import { useSnDetailQuery4h, useSnDetailQuery1d, useSnBlockQuery } from '../queries/starkNet';
+import { useEthDetailQuery4h, useEthDetailQuery1d } from '../queries/ethereum';
+import { FeePanel } from '../components/fee';
+import { TxnsPanel } from '../components/transactions';
+import { LatencyPanel } from '../components/latency';
 
 const Main: React.FC = () => {
-  const {isLoading:stark_Loading, data:stark_data} = useStarkBlocksQuery();
-  const {isLoading:eth_Loading, data:eth_data} =useEthBlocksQuery();
-  const [ethData, setETHData] = useState<{ [key in string]: {timestamp:number,txnCount:number} }>({ [0]: {timestamp:0,txnCount:0} })
-  const [starkData, setStarkData] = useState<{ [key in string]: {timestamp:number,txnCount:number} }>({ [0]: {timestamp:0,txnCount:0} })
-  
-  const [isEthLoading, setIsEthLoading] = useState<boolean>(true)
-  
-  function timeout(delay: number) {
-    return new Promise( res => setTimeout(res, delay) );
-  }
-  
-  useEffect(() => {
-      if (eth_data) {
-        setIsEthLoading(true);
-        const setthis = async() =>{
-          await timeout(1000);
-          setETHData(eth_data)
-          setIsEthLoading(false);
-        }
-        setthis();
-      }
-  }, [eth_Loading])
+    const {isLoading:snBlockLoading, data:snBlockData} = useSnBlockQuery();
+    const {isLoading:snDetailLoading_4h, data:snDetailData_4h} = useSnDetailQuery4h();
+    const {isLoading:ethDetailLoading_4h, data:ethDetailData_4h} = useEthDetailQuery4h();
+    const {isLoading:snDetailLoading_1d, data:snDetailData_1d} = useSnDetailQuery1d();
+    const {isLoading:ethDetailLoading_1d, data:ethDetailData_1d} = useEthDetailQuery1d();
+    const [timeFrame_feePanel, setTimeFrame_feePanel] = useState<string>('4h');
+    const [timeFrame_txnsPanel, setTimeFrame_txnsPanel] = useState<string>('4h');
 
-  useEffect(() => {
-    if (stark_data) {
-      const setthis = async() =>{
-        await timeout(100);
-        setStarkData(stark_data)
-      }
-      setthis();
-    }
-}, [stark_Loading])
-
-  const clickHandle = () => {
-    console.log("maindata",ethData)  
-  }
-
-  return (
-    <div className="min-h-screen bg-sky-900">
-      <div className="py-10">
-        <h1 className="text-white text-center pt-8 pb-2">Transactions Per Block (TPB) </h1>
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
-          <TpbPanel isLoading={stark_Loading} data={starkData} chain={"starkNet"}/>
-          <TpbPanel isLoading={isEthLoading} data={ethData} chain={"ethereum"}/>
+    return (
+        <div className="min-h-screen">
+            <div className="py-14 2xl:py-20">
+                <FeePanel ethDetailLoading = {timeFrame_feePanel === '4h' ? ethDetailLoading_4h : ethDetailLoading_1d } 
+                    ethDetailData = {timeFrame_feePanel === '4h' ? ethDetailData_4h : ethDetailData_1d } 
+                    snDetailLoading = {timeFrame_feePanel === '4h' ? snDetailLoading_4h : snDetailLoading_1d } 
+                    snDetailData = {timeFrame_feePanel === '4h' ? snDetailData_4h : snDetailData_1d } 
+                    snBlockData = {snBlockData} 
+                    snBlockLoading = {snBlockLoading}
+                    timeFrame = {timeFrame_feePanel}
+                    setTimeFrame = {setTimeFrame_feePanel}
+                />
+            </div>
+            <div className="py-14 2xl:py-20">
+                <TxnsPanel ethDetailLoading = {timeFrame_txnsPanel === '4h' ? ethDetailLoading_4h : ethDetailLoading_1d } 
+                    ethDetailData = {timeFrame_txnsPanel === '4h' ? ethDetailData_4h : ethDetailData_1d } 
+                    snDetailLoading = {timeFrame_txnsPanel === '4h' ? snDetailLoading_4h : snDetailLoading_1d } 
+                    snDetailData = {timeFrame_txnsPanel === '4h' ? snDetailData_4h : snDetailData_1d } 
+                    snBlockData = {snBlockData} 
+                    snBlockLoading = {snBlockLoading}
+                    timeFrame = {timeFrame_txnsPanel}
+                    setTimeFrame = {setTimeFrame_txnsPanel}
+                />
+            </div>
+            <div className="py-14 2xl:py-20">
+                <LatencyPanel ethDetailLoading = {timeFrame_txnsPanel === '4h' ? ethDetailLoading_4h : ethDetailLoading_1d } 
+                    ethDetailData = {timeFrame_txnsPanel === '4h' ? ethDetailData_4h : ethDetailData_1d } 
+                    snDetailLoading = {timeFrame_txnsPanel === '4h' ? snDetailLoading_4h : snDetailLoading_1d } 
+                    snDetailData = {timeFrame_txnsPanel === '4h' ? snDetailData_4h : snDetailData_1d } 
+                    snBlockData = {snBlockData} 
+                    snBlockLoading = {snBlockLoading}
+                    timeFrame = {timeFrame_txnsPanel}
+                    setTimeFrame = {setTimeFrame_txnsPanel}
+                />
+            </div>
         </div>
-        
-        <h1 onClick={clickHandle} className="text-white text-center pt-8 pb-2">Transactions Per Second (TPS) </h1>
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
-          <TpsPanel isLoading={stark_Loading} data={starkData} chain={"starkNet"}/>
-          <TpsPanel isLoading={isEthLoading} data={ethData} chain={"ethereum"}/>
-        </div>
-
-        <h1 onClick={clickHandle} className="text-white text-center pt-8 pb-2">BlockLatency (in sec) </h1>
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
-          <BlockLatencyPanel isLoading={stark_Loading} data={starkData} chain={"starkNet"}/>
-          <BlockLatencyPanel isLoading={isEthLoading} data={ethData} chain={"ethereum"}/>
-        </div>
-        
-        <h1 onClick={clickHandle} className="text-white text-center pt-8 pb-2">Normal Distribution</h1>
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-5">
-          <DistributionPanel isLoading={stark_Loading} data={starkData} chain={"starkNet"}/>
-          <DistributionPanel isLoading={isEthLoading} data={ethData} chain={"ethereum"}/>
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Main;

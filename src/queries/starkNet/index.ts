@@ -24,7 +24,8 @@ export const useStarkBlocksQuery = () => {
 
 export const useSnBlockQuery = () => {
   const fetch = async () => {
-    let { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}stark/detail?limit=12`, {headers});
+    // let { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}stark/detail?limit=12`, {headers});
+    let { data } = await axios.get(`/api/stark/detail?limit=12`, {headers});
     return {detail:data, lastUpdated: dayjs()};
   };
   return useQuery<{ detail:{[key in string]: any}, lastUpdated:any }>('useSnBlockQuery', fetch,  {
@@ -34,7 +35,8 @@ export const useSnBlockQuery = () => {
 
 export const useSnDetailQuery4h = () => {
   const fetch = async () => {
-    const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}stark/detail?period=4h`, {headers});
+    // const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}stark/detail?period=4h`, {headers});
+    const { data } = await axios.get(`/api/stark/detail?period=4h`, {headers});
     return data;
   };
   return useQuery<{ [key in string]: any }>('useSnDetailQuery4h', fetch);
@@ -42,7 +44,8 @@ export const useSnDetailQuery4h = () => {
 
 export const useSnDetailQuery1d = () => {
   const fetch = async () => {
-    const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}stark/detail?period=24h`, {headers});
+    // const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}stark/detail?period=24h`, {headers});
+    const { data } = await axios.get(`/api/stark/detail?period=24h`, {headers});
     return data;
   };
   return useQuery<{ [key in string]: any }>('useSnDetailQuery1d', fetch);

@@ -153,7 +153,7 @@ export default function FeePanel(props: {
             }
             setChartLoading(false);
         }
-    }, [chartDisplay,avgGasUsed_ETH, isCurrencyEth]);
+    }, [chartDisplay,avgGasUsed_ETH, avgGasUsed_SN, isCurrencyEth]);
 
     const handleTimeFrame = (period:string) => {
         setTimeFrame(period)

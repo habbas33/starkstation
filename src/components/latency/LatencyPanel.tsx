@@ -111,7 +111,7 @@ export default function LatencyPanel(props: {
            
             setChartLoading(false);
         }
-    }, [ avgBlockLatency_ETH ]);
+    }, [ avgBlockLatency_ETH, avgBlockLatency_SN ]);
 
     const handleTimeFrame = (period:string) => {
         setTimeFrame(period)

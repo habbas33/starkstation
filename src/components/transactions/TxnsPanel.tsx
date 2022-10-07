@@ -116,7 +116,7 @@ export default function TxnsPanel(props: {
             }
             setChartLoading(false);
         }
-    }, [chartDisplay,avgTpb_ETH]);
+    }, [chartDisplay,avgTpb_ETH,avgTps_SN]);
 
     const handleTimeFrame = (period:string) => {
         setTimeFrame(period)

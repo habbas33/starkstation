@@ -4,6 +4,10 @@ import { useQuery } from 'react-query';
 const APIKEY = import.meta.env.INFURA_API;
 import { STARKSTAION_API_ENDPOINT } from '../../constants/globals';
 
+const headers = {
+  "Content-Type": "application/json",
+};
+
 export const useEthBlocksQuery = () => {
     const provider = new ethers.providers.InfuraProvider(
       'mainnet',
@@ -34,7 +38,7 @@ export const useEthBlocksQuery = () => {
 
   export const useEthDetailQuery4h = () => {
     const fetch = async () => {
-      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/detail?period=4h`);
+      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/detail?period=4h`, {headers});
       return data;
     };
     return useQuery<{ [key in string]: any }>('useEthDetailQuery4h', fetch);
@@ -42,7 +46,7 @@ export const useEthBlocksQuery = () => {
 
   export const useEthDetailQuery1d = () => {
     const fetch = async () => {
-      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/detail?period=24h`);
+      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/detail?period=24h`, {headers});
       return data;
     };
     return useQuery<{ [key in string]: any }>('useEthDetailQuery1d', fetch);

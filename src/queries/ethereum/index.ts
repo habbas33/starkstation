@@ -17,7 +17,6 @@ export const useEthBlocksQuery = () => {
       const currentBlock = await provider.getBlock("latest");
 
       const blocks: { [key in string]: {timestamp:number,txnCount:number} } = {};
-      // console.log("eth",currentBlock)
       if (currentBlock.number !== null) { //only when block is mined not pending
         const promises = [];
         for (let i = 0; i<50; i++) {

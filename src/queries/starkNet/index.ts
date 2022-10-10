@@ -15,7 +15,6 @@ export const useStarkBlocksQuery = () => {
     Object.keys(data.items).forEach(blockKey => {
       blocks[blockKey] = {timestamp:data.items[blockKey]["timestamp"]*1000 ,txnCount:data.items[blockKey]["txnCount"]};
     });
-    // console.log("stark",data.items[0])
     return blocks;
   };
 

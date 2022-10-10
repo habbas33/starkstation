@@ -1,6 +1,5 @@
-import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Test, Main } from './pages';
+import { Test, Main, Disclaimer } from './pages';
 import { Navbar } from './components/navbar';
 import { Footer } from './components/footer';
 import { PriceContextProvider } from './context/PriceContext';
@@ -13,12 +12,16 @@ function App() {
         <PriceContextProvider>
           <Navbar/>
           <Routes>
-            <Route path="/test" element={ <Test /> } />
-          </Routes>
-          
-          <Routes>
             <Route path="/" element={ <Main /> } />
           </Routes>
+
+          <Routes>
+            <Route path="/disclaimer" element={ <Disclaimer /> } />
+          </Routes>
+
+          {/* <Routes>
+            <Route path="/test" element={ <Test /> } />
+          </Routes> */}
           <Footer/>
         </PriceContextProvider>
       </div>

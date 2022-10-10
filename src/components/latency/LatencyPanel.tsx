@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
 import LatencyChart from './LatencyChart';
@@ -29,17 +29,12 @@ export default function LatencyPanel(props: {
     const {snDetailLoading, snBlockLoading, ethDetailLoading, snDetailData, snBlockData, ethDetailData, timeFrame, setTimeFrame } = props;
     const [chartLoading, setChartLoading] = useState<boolean>(false);
     const [lastUpdated, setLastUpdated] = useState<any>(0);
-    // const [chartDisplay, setChartDisplay] = useState<string>('tps');
     const [chartData, setChartData] = useState<IChartData[]>([]);
     
     const [avgBlockLatency_SN, setAvgBlockLatency_SN] = useState<IData[]>([]);    
     const [avgBlockLatency_ETH, setAvgBlockLatency_ETH] = useState<IData[]>([]);    
     const [distributionData, setDistributionData] = useState<{ value: number; normalDensityZx: number;}[]>([])
     const [variance, setVariance] = useState<number>(0)
-
-    // const [avgTps_SN, setAvgTps_SN] = useState<IData[]>([]);    
-    // const [avgTpb_SN, setAvgTpb_SN] = useState<IData[]>([]);
-    // const [avgTpb_ETH, setAvgTpb_ETH] = useState<IData[]>([]);
     
     const snBlock = snBlockData?.detail[0];
 
@@ -66,7 +61,6 @@ export default function LatencyPanel(props: {
                 normalDensityZx: number;
             }[] = [];
             const latency_values: number[] = avgBlockLatency_SN.map((v) => v.value)
-            // console.log(avgBlockLatency_SN,"latency Values", latency_values)
 
             const sd = calculateSD(latency_values);
             const mean = calculateMean(latency_values);
@@ -86,11 +80,6 @@ export default function LatencyPanel(props: {
             const timeFormat = timeFrame === '1d' ? 'MMM DD, YYYY' : 'MMM DD, YYYY HH:00'
             const _avgBlockLatency: IData[] = ethDetailData.map((item: any) => ({time:dayjs(item?.timestamp*1000).format(timeFormat), value:item?.blockLatency}));
             setAvgBlockLatency_ETH(_avgBlockLatency);
-            // const _avgTps: IData[] = ethDetailData.map((item: any) => ({time:dayjs(item?.timestamp*1000).format('MMM DD, YYYY HH:00'), value:item?.transactionsPerSecond}));
-            // const _avgTpb: IData[] = ethDetailData.map((item: any) => ({time:dayjs(item?.timestamp*1000).format('MMM DD, YYYY HH:00'), value:item?.transactionsPerBlock}));
-            
-            // setAvgTps_ETH(_avgTps);
-            // setAvgTpb_ETH(_avgTpb);
         }
     }, [ethDetailData]);
 
@@ -121,10 +110,10 @@ export default function LatencyPanel(props: {
         <div>
             <h1 className="text-2xl text-white text-center">Block Creation Time</h1>
             <h1 className="text-lg py-1 text-gray-400 text-center">at scale the STARK prover and verifier are fastest in class</h1>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 my-8 text-gray-400 drop-shadow-xl">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 my-8 text-gray-400 drop-shadow-2xl">
                 <div className="grid order-4 lg:order-none grid-rows-3 gap-4"> 
                     <div className={`bg-box text-center rounded-lg p-5`}>
-                        <span>BlOCK LATENCY</span>
+                        <span>BlOCK LATENCY (SECONDS)</span>
                         <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
                             {!snBlockLoading ? 
                                 <> {snBlock?.blockLatency.toFixed(2)} </> 
@@ -139,7 +128,7 @@ export default function LatencyPanel(props: {
                     <div className={`row-span-2 bg-box rounded-lg p-5`}>
                         <div className="table-wrp max-h-64 w-full text-sm pr-10">
                         <table className="w-full table-fixed w-full ">
-                            <thead className="sticky bg-box  top-0">
+                            <thead className="sticky bg-box top-0">
                                 <tr>
                                     <th className="text-start pb-4">BLOCK</th>
                                     <th className="text-end pb-4">LATENCY (sec.)</th>
@@ -161,11 +150,11 @@ export default function LatencyPanel(props: {
                     </div>
                 </div>
                 <div className="flex flex-col justify-between order-2 lg:order-none py-5 px-0 2xl:p-5 bg-box rounded-lg bg-gradient-to-br from-[#0d1b3d] via-[#081128] to-transparent">
-                     <h1 className="text-gray-300 text-lg text-center py-5">AVERAGE BLOCK LATENCY</h1>
+                     <h1 className="text-gray-400 text-lg text-center py-5">AVERAGE BLOCK LATENCY</h1>
                     <LatencyChart data={chartData} isLoading={snDetailLoading && ethDetailLoading && chartLoading} chartDisplay={"blockLatency"} timeFrame={timeFrame}/>
                 </div>
                 <div className="flex flex-col justify-between order-3 lg:order-none py-5 px-0 2xl:p-5 bg-box rounded-lg bg-gradient-to-br from-[#0d1b3d] via-[#081128] to-transparent">
-                    <h1 className="text-gray-300 text-lg text-center py-5">DISTRIBUTION</h1>
+                    <h1 className="text-gray-400 text-lg text-center py-5">DISTRIBUTION</h1>
                     <div className="flex flex-col">
                         <LatencyChart data={distributionData} isLoading={snDetailLoading && ethDetailLoading && chartLoading} chartDisplay={"distribution"} timeFrame={timeFrame}/>
                         <span className="text-gray-300 text-right font-semibold text-[#fb7185] text-xs py-1 pr-[40px] Robo">VARIANCE: {Numeral(variance).format('0.[0000]a')}</span>

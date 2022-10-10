@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import dayjs from 'dayjs';
 import {ethers} from 'ethers';
 import { SpinnerCircular } from "spinners-react";
@@ -16,6 +16,7 @@ interface IChartData {
     time: string;
     sn_value?: number;
     eth_value: number;
+    percent_change?: number;
 }
 
 export default function FeePanel(props: {
@@ -33,7 +34,7 @@ export default function FeePanel(props: {
     const [chartLoading, setChartLoading] = useState<boolean>(false);
     const [lastUpdated, setLastUpdated] = useState<any>(0);
     const [feeEstimate, setFeeEstimate] = useState<{ ethTransferFee:string, erc20TransferFee:string }>({ ethTransferFee:'0.000233541', erc20TransferFee:'0.000233495' });
-    const [chartDisplay, setChartDisplay] = useState<string>('ethTransferFee');
+    const [chartDisplay, setChartDisplay] = useState<string>('usdcTransferFee');
     const [currency, setCurrency] = useState<string>('eth');
     const [chartData, setChartData] = useState<IChartData[]>([]);
     const [ethTransferData_SN, setEthTransferData_SN] = useState<IData[]>([]);
@@ -98,7 +99,9 @@ export default function FeePanel(props: {
                         let snValue = ethTransferData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         _ethTransferData[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
                         if (snValue){
-                            _ethTransferData[i].sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
+                            const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
+                            _ethTransferData[i].sn_value = sn_value;
+                            _ethTransferData[i].percent_change = sn_value/_ethTransferData[i].eth_value;
                         }
                     });
                     setChartData(_ethTransferData.reverse());
@@ -110,7 +113,9 @@ export default function FeePanel(props: {
                         let snValue = usdcTransferData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         _usdcTransferData[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
                         if (snValue){
-                            _usdcTransferData[i].sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
+                            const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
+                            _usdcTransferData[i].sn_value = sn_value;
+                            _usdcTransferData[i].percent_change = sn_value/_usdcTransferData[i].eth_value;
                         }
                     });
                     setChartData(_usdcTransferData.reverse());
@@ -122,7 +127,9 @@ export default function FeePanel(props: {
                         let snValue = avgTxnFee_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         _avgTxnFee[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
                         if (snValue){
-                            _avgTxnFee[i].sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
+                            const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
+                            _avgTxnFee[i].sn_value = sn_value;
+                            _avgTxnFee[i].percent_change = sn_value/_avgTxnFee[i].eth_value;
                         }
                     });
                     setChartData(_avgTxnFee.reverse());
@@ -135,6 +142,7 @@ export default function FeePanel(props: {
                         _avgGasUsed[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:v.value/10**9, sn_value:avgGasUsed_SN[i].value/10**9}
                         if (snValue){
                             _avgGasUsed[i].sn_value = snValue.value/10**9;
+                            _avgGasUsed[i].percent_change = (snValue.value/10**9)/_avgGasUsed[i].eth_value;
                         }
                     });
                     setChartData(_avgGasUsed.reverse());
@@ -146,7 +154,9 @@ export default function FeePanel(props: {
                         let snValue = ethTransferData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         __ethTransferData[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
                         if (snValue){
-                            __ethTransferData[i].sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
+                            const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
+                            _ethTransferData[i].sn_value = sn_value;
+                            _ethTransferData[i].percent_change = sn_value/_ethTransferData[i].eth_value;
                         }
                     });
                     setChartData(__ethTransferData.reverse());
@@ -168,11 +178,12 @@ export default function FeePanel(props: {
             <h1 className="text-lg py-1 text-gray-400 text-center">save upto 10x on asset transfer fees</h1>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 my-8 text-gray-400 drop-shadow-xl">
                 <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 order-1 lg:order-none"> 
-                    <div onClick={()=>setChartDisplay('ethTransferFee')} className={`bg-box rounded-lg p-3 px-5 2xl:p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "ethTransferFee" ? "border-4 border-sky-900" : ""}`}>
-                        <span className='text-xs sm:text-sm 2xl:text-lg'>ETH TRANSFER FEE</span>
+                    <div onClick={()=>setChartDisplay('usdcTransferFee')} className={`bg-box rounded-lg p-3 px-5 2xl:p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "usdcTransferFee" ? "border-4 border-sky-900" : ""}`}>
+                        <span className='text-xs sm:text-sm 2xl:text-lg'>USDC TRANSFER FEE</span>
+                        <span className='hidden sm:inline text-xs sm:text-sm 2xl:text-lg'> (ERC20)</span>
                         <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                             {!snBlockLoading ? 
-                                <> {ethTranferFeeLatest} {currency.toUpperCase()} </> 
+                                <> {erc20TransferFeeLatest} {currency.toUpperCase()} </> 
                                 :
                                 <div className= "flex justify-center">
                                     <SpinnerCircular size={20} thickness={100} speed={118} color="#fff1f2" secondaryColor="#0c4a6e" /> 
@@ -180,12 +191,11 @@ export default function FeePanel(props: {
                             }
                         </h1>
                     </div>
-                    <div onClick={()=>setChartDisplay('usdcTransferFee')} className={`bg-box rounded-lg p-3 px-5 2xl:p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "usdcTransferFee" ? "border-4 border-sky-900" : ""}`}>
-                        <span className='text-xs sm:text-sm 2xl:text-lg'>USDC TRANSFER FEE</span>
-                        <span className='hidden sm:inline text-xs sm:text-sm 2xl:text-lg'>(ERC20)</span>
+                    <div onClick={()=>setChartDisplay('ethTransferFee')} className={`bg-box rounded-lg p-3 px-5 2xl:p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "ethTransferFee" ? "border-4 border-sky-900" : ""}`}>
+                        <span className='text-xs sm:text-sm 2xl:text-lg'>ETH TRANSFER FEE</span>
                         <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                             {!snBlockLoading ? 
-                                <> {erc20TransferFeeLatest} {currency.toUpperCase()} </> 
+                                <> {ethTranferFeeLatest} {currency.toUpperCase()} </> 
                                 :
                                 <div className= "flex justify-center">
                                     <SpinnerCircular size={20} thickness={100} speed={118} color="#fff1f2" secondaryColor="#0c4a6e" /> 
@@ -220,10 +230,10 @@ export default function FeePanel(props: {
                     
                 </div>
                 <div className="lg:col-span-2 flex flex-col justify-between py-5 px-0 2xl:p-5 bg-box rounded-lg bg-gradient-to-br from-[#0d1b3d] via-[#081128] to-transparent">
-                    {chartDisplay === 'ethTransferFee' && <h1 className="text-gray-300 text-lg text-center">AVERAGE ETH TRANSFER FEE ({currency.toUpperCase()})</h1>}
-                    {chartDisplay === 'usdcTransferFee' && <h1 className="text-gray-300 text-lg text-center">AVERAGE USDC TRANSFER FEE ({currency.toUpperCase()})</h1>}
-                    {chartDisplay === 'avgTxnFee' && <h1 className="text-gray-300 text-lg text-center">AVERAGE TRANSACTION FEE PER BLOCK ({currency.toUpperCase()})</h1>}
-                    {chartDisplay === 'avgGasUsed' && <h1 className="text-gray-300 text-lg text-center">AVERAGE GAS USED PER BLOCK (Gwei)</h1>}
+                    {chartDisplay === 'ethTransferFee' && <h1 className="text-gray-400 text-lg text-center">AVERAGE ETH TRANSFER FEE ({currency.toUpperCase()})</h1>}
+                    {chartDisplay === 'usdcTransferFee' && <h1 className="text-gray-400 text-lg text-center">AVERAGE USDC TRANSFER FEE ({currency.toUpperCase()})</h1>}
+                    {chartDisplay === 'avgTxnFee' && <h1 className="text-gray-400 text-lg text-center">AVERAGE TRANSACTION FEE PER BLOCK ({currency.toUpperCase()})</h1>}
+                    {chartDisplay === 'avgGasUsed' && <h1 className="text-gray-400 text-lg text-center">AVERAGE GAS USED PER BLOCK (Gwei)</h1>}
                     <FeeChart data={chartData} isLoading={snDetailLoading && ethDetailLoading && chartLoading} chartDisplay={chartDisplay} currency={currency} timeFrame={timeFrame}/>
                 </div>
                 <div className="flex order-last lg:order-none justify-between items-center text-sm">

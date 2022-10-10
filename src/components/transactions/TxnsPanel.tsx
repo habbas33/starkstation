@@ -1,11 +1,8 @@
 
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import {ethers} from 'ethers';
 import { SpinnerCircular } from "spinners-react";
-import { getEthTransferFee } from "../../services/stark";
 import TxnsChart from './TxnsChart';
-import { PriceContext } from '../../context/PriceContext';
 
 interface IData {
     time: string;
@@ -72,8 +69,6 @@ export default function TxnsPanel(props: {
     useEffect(() => {
         if(chartDisplay){
             setChartLoading(true);
-            // console.log("avgTps_SN",JSON.stringify(avgTps_SN))
-            // console.log("avgTps_ETH",JSON.stringify(avgTps_ETH))
             switch(chartDisplay) {
                 case "tps":
                     let _avgTps: IChartData[] = []
@@ -132,7 +127,7 @@ export default function TxnsPanel(props: {
                         <div onClick={()=>setChartDisplay('tps')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "tps" ? "border-4 border-sky-900" : ""}`}>
                             <span className="hidden sm:inline">TXNs PER SECOND</span>
                             <span className="inline sm:hidden">TPS</span>
-                            <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                            <h1 className='text-gray-300 Robo text-2xl lg:text-3xl 2xl:text-4xl py-4'>
                                 {!snBlockLoading ? 
                                     <> {snBlock?.transactionsPerSecond.toFixed(4)} </> 
                                     :
@@ -143,10 +138,9 @@ export default function TxnsPanel(props: {
                             </h1>
                         </div>
                         <div onClick={()=>setChartDisplay('tpb')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "tpb" ? "border-4 border-sky-900" : ""}`}>
-                            {/* <span>TXNs PER BLOCK</span> */}
                             <span className="hidden sm:inline">TXNs PER BLOCK</span>
                             <span className="inline sm:hidden">TPB</span>
-                            <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                            <h1 className='text-gray-300 Robo text-2xl lg:text-3xl 2xl:text-4xl py-4'>
                                 {!snBlockLoading ? 
                                     <> {snBlock?.transactionsPerBlock} </> 
                                     :
@@ -185,8 +179,8 @@ export default function TxnsPanel(props: {
                     </div>
                 </div>
                 <div className="flex flex-col justify-between order-1 lg:order-none py-5 px-0 2xl:p-5 bg-box rounded-lg bg-gradient-to-br from-[#0d1b3d] via-[#081128] to-transparent">
-                    {chartDisplay === 'tps' && <h1 className="text-gray-300 text-lg text-center py-5">TRANSACTIONS PER SECOND (TPS)</h1>}
-                    {chartDisplay === 'tpb' && <h1 className="text-gray-300 text-lg text-center py-5">TRANSACTIONS PER BLOCK (TPB)</h1>}
+                    {chartDisplay === 'tps' && <h1 className="text-gray-400 text-lg text-center py-5">TRANSACTIONS PER SECOND (TPS)</h1>}
+                    {chartDisplay === 'tpb' && <h1 className="text-gray-400 text-lg text-center py-5">TRANSACTIONS PER BLOCK (TPB)</h1>}
                     <TxnsChart data={chartData} isLoading={snDetailLoading && ethDetailLoading && chartLoading} chartDisplay={chartDisplay} timeFrame={timeFrame}/>
                 </div>
                 <div className="flex order-last lg:order-none justify-between items-center text-sm">

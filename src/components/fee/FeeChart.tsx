@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Numeral from 'numeral';
 
 export default function FeeChart(props: {
@@ -14,7 +14,6 @@ export default function FeeChart(props: {
 }) {
     const { data, isLoading, chartDisplay, currency, timeFrame } = props;
     const [chartData, setChartData] = useState<any>([])
-
     useEffect(() => {
       if (data) {
         let uniqueTimeFrames:any = [];
@@ -59,6 +58,8 @@ export default function FeeChart(props: {
                     padding={{ left: 20, right: 20 }}
                     />
                     <YAxis
+                    yAxisId={0}
+                    dataKey="eth_value"
                     axisLine={true}
                     tickLine={false}
                     type="number"
@@ -70,25 +71,32 @@ export default function FeeChart(props: {
                     stroke="#81cefa"
                     padding={{ top: 20, bottom: 5 }}
                     />
+                    <YAxis
+                    yAxisId={1}
+                    dataKey="percent_change"
+                    domain={[0, 1]}
+                    axisLine={true}
+                    tickLine={false}
+                    type="number"
+                    orientation="left"
+                    tickFormatter={tick => toK_percent(tick)}
+                    interval="preserveStartEnd"
+                    fontSize={10}
+                    fontFamily='Roboto Mono, monospace'
+                    stroke="#81cefa"
+                    padding={{ top: 20, bottom: 5 }}
+                    />
                     <Tooltip
                     cursor={true}
                     active={false}
-                    formatter={(val:any) => toNiceValue(val,displayUnit)}
-                    labelFormatter={label => toNiceDateYear(label, timeFrame)}
-                    labelStyle={{ paddingTop: 4, paddingBottom: 4 }}
-                    contentStyle={{
-                        padding: '10px 14px',
-                        borderRadius: 10,
-                        border: '2px solid #DDD',
-                        backgroundColor: '#081128',
-                        color: '#fff',
-                        fontSize: '12px',
-                    }}
+                    //@ts-ignore
+                    content={<CustomTooltip timeFrame={timeFrame} displayUnit={displayUnit}/>}
                     wrapperStyle={{ top: -70, left: -10, outline: 'none' }}
                     />
                     <Legend />
-                    <Line type="monotone" name="on Starknet" dataKey="sn_value" animationDuration={500} isAnimationActive={true} legendType="star" stroke={'#fb7185'} strokeWidth={2} dot={false}  />
-                    <Line type="monotone" name="on Ethereum" dataKey="eth_value" animationDuration={500} isAnimationActive={true} legendType="diamond" stroke={'#23a6f1'} strokeWidth={2} dot={false}  />
+                    <Line type="monotone" yAxisId={0} name="on Starknet" dataKey="sn_value" animationDuration={500} isAnimationActive={true} legendType="star" stroke={'#fb7185'} strokeWidth={2} dot={false}  />
+                    <Line type="monotone" yAxisId={0} name="on Ethereum" dataKey="eth_value" animationDuration={500} isAnimationActive={true} legendType="diamond" stroke={'#23a6f1'} strokeWidth={2} dot={false}  />
+                    <Line type="monotone" yAxisId={1} name="L2 vs L1" dataKey="percent_change" animationDuration={500} isAnimationActive={true} legendType="wye" stroke={'#b9b72b'} strokeDasharray="5 5" strokeWidth={1} dot={false}  />
                 </LineChart>
                 </ResponsiveContainer>
             ) : (
@@ -106,9 +114,43 @@ export default function FeeChart(props: {
     );
 }
 
+const CustomTooltip = (props:{ active:any, payload:any, label:any, timeFrame:string, displayUnit:string }) => {
+    const {active, payload, label, timeFrame, displayUnit} = props;
+    if (active && payload && payload.length) {
+        const date = toNiceDateYear(label, timeFrame)
+        const snValue = toNiceValue(payload[0].value, displayUnit)
+        const ethValue = toNiceValue(payload[1].value, displayUnit)
+        const l2vsl1 = toK_percent_float(payload[2].value)
+      return (
+        <div className="custom-tooltip" style={{
+                padding: '10px 14px',
+                borderRadius: 10,
+                border: '2px solid #DDD',
+                backgroundColor: '#081128',
+                color: '#fff',
+                fontSize: '12px',
+            }}>
+          <p style={{ paddingTop: 4, paddingBottom: 4 }}>{date}</p>
+          <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#fb7185]">{`on Starknet : ${snValue}`}</p>
+          <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#23a6f1]">{`on Ethereum : ${ethValue}`}</p>
+          <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#b9b72b]">{`L2 vs L1 : ${l2vsl1}`}</p>
+        </div>
+      );
+    }
+  
+    return null;
+  };
 
 export const toK = (num:any) => {
   return Numeral(num).format('0.[000000]a');
+};
+
+export const toK_percent = (num:any) => {
+    return Numeral(num*100).format('0 a').concat(" %");
+};
+
+export const toK_percent_float = (num:any) => {
+    return Numeral(num*100).format('0.[00] a').concat(" %");
 };
 
 export const toNiceValue = (num:any,unit:string) => {

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Numeral from 'numeral';
 
 export default function TxnsChart(props: {
@@ -25,7 +25,6 @@ export default function TxnsChart(props: {
             }
             return false;
         })
-        // console.log(_chartData)
         setChartData(_chartData)
       }
     }, [data])

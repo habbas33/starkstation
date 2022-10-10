@@ -1,4 +1,4 @@
-import { Account, ec, Provider, number, uint256, Contract, json } from 'starknet'
+import { Account, ec, Provider, number, uint256 } from 'starknet'
 import { FROM_ADDRESS_SN_MAINNET, TO_ADDRESS_SN_MAINNET, L2_FEE_CONTRACT_ADDRESS, USDC_CONTRACT_ADDRESS_SN } from '../../constants/globals';
 
 const provider = new Provider({sequencer: { network: 'mainnet-alpha' } })

@@ -37,8 +37,8 @@ export const useEthBlocksQuery = () => {
 
   export const useEthDetailQuery4h = () => {
     const fetch = async () => {
-      // const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/detail?period=4h`, {headers});
-      const { data } = await axios.get(`/api/eth/detail?period=4h`, {headers});
+      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/detail?period=4h`, {headers});
+      // const { data } = await axios.get(`/api/eth/detail?period=4h`, {headers});
       return data;
     };
     return useQuery<{ [key in string]: any }>('useEthDetailQuery4h', fetch);
@@ -46,8 +46,8 @@ export const useEthBlocksQuery = () => {
 
   export const useEthDetailQuery1d = () => {
     const fetch = async () => {
-      // const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/detail?period=24h`, {headers});
-      const { data } = await axios.get(`/api/eth/detail?period=24h`, {headers});
+      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/detail?period=24h`, {headers});
+      // const { data } = await axios.get(`/api/eth/detail?period=24h`, {headers});
       return data;
     };
     return useQuery<{ [key in string]: any }>('useEthDetailQuery1d', fetch);

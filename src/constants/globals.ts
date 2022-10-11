@@ -1,6 +1,7 @@
 export const INFURA_ETH_ENDPOINT = "https://mainnet.infura.io/v3/d2c267d28e964dbfb23467aa9a50a951/"
 export const VOYGER_ENDPOINT = "https://voyager.online/api/"
-export const STARKSTAION_API_ENDPOINT = "http://170.187.225.159:3000/"
+// export const STARKSTAION_API_ENDPOINT = "https://170.187.225.159:3000/"
+export const STARKSTAION_API_ENDPOINT = "https://starkstationapi.voyager.online/"
 export const COIN_GECKO_ENDPOINT_ETH_PRICE =  "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=USD&include_market_cap=false&include_24hr_vol=false&include_24hr_change=true&include_last_updated_at=true"
 // export const STARKSTAION_API_ENDPOINT = "http://127.0.0.18:3000/"
 export const FROM_ADDRESS_SN_MAINNET = "0x05c04939c0e7502a3467d6881c3666d73e8b3fd84cf92264cb0b668710f8960a"

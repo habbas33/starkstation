@@ -1,14 +1,16 @@
 import { Account, ec, Provider, number, uint256 } from 'starknet'
-import { FROM_ADDRESS_SN_MAINNET, TO_ADDRESS_SN_MAINNET, L2_FEE_CONTRACT_ADDRESS, USDC_CONTRACT_ADDRESS_SN } from '../../constants/globals';
+import { FROM_ADDRESS_SN_MAINNET, FROM_ADDRESS_SN_TESTNET, TO_ADDRESS_SN_MAINNET, TO_ADDRESS_SN_TESTNET, L2_FEE_CONTRACT_ADDRESS, USDC_CONTRACT_ADDRESS_SN, USDC_CONTRACT_ADDRESS_SN_TESTNET } from '../../constants/globals';
 
 const provider = new Provider({sequencer: { network: 'mainnet-alpha' } })
+const tn_provider = new Provider({sequencer: { network: 'goerli-alpha' } })
 const SN_PVT_KEY = import.meta.env.VITE_SN_PVT_KEY;
+const SN_PVT_KEY_TN = import.meta.env.VITE_SN_PVT_KEY_TN;
 
-const useStarkNetAccount = () =>{
-    const starkKeyPair = ec.getKeyPair(SN_PVT_KEY);
+const useStarkNetAccount = (_provider:any, _pvtKey:string, _from:string) =>{
+    const starkKeyPair = ec.getKeyPair(_pvtKey);
     const account = new Account(
-        provider,
-        FROM_ADDRESS_SN_MAINNET,
+        _provider,
+        _from,
         starkKeyPair
     );
     return account
@@ -20,13 +22,13 @@ const convertBnWeiToNumberEth =  (value:any) =>{
 }
 
 // estimate eth transfer fee in L2
-const estimateEthTransferFee = async (account:any) =>{
+const estimateEthTransferFee = async (account:any, _to:string) =>{
     const res = await account.estimateFee(
         {
             contractAddress: L2_FEE_CONTRACT_ADDRESS,
             entrypoint: "transfer",
             calldata: [
-                TO_ADDRESS_SN_MAINNET,
+                _to,
                 "10000000000",
                 "0"
               ]
@@ -35,13 +37,13 @@ const estimateEthTransferFee = async (account:any) =>{
 }
 
 // estimate USDC transfer fee in L2
-const EstimateUsdcTransferFee = async(account:any) => {
+const EstimateUsdcTransferFee = async(account:any, _usdcAddress:string, _to:string) => {
     const amount = uint256.bnToUint256("100")
     const res = await account.estimateFee(
         {
-            contractAddress: USDC_CONTRACT_ADDRESS_SN,
+            contractAddress: _usdcAddress,
             entrypoint: "transfer",
-            calldata: [TO_ADDRESS_SN_MAINNET, amount.low, amount.high],
+            calldata: [_to, amount.low, amount.high],
         },
         undefined,
         { 
@@ -51,11 +53,11 @@ const EstimateUsdcTransferFee = async(account:any) => {
     return convertBnWeiToNumberEth(res.overall_fee)
 }
 
-const collectFeeEstimate = async(account:any) =>{
+const collectFeeEstimate = async(account:any, _to:string, _usdcAddress:string) =>{
     try {
         const [ ethTransferFee, erc20TransferFee ] = await Promise.all([
-            await estimateEthTransferFee(account),
-            await EstimateUsdcTransferFee(account)
+            await estimateEthTransferFee(account, _to),
+            await EstimateUsdcTransferFee(account, _usdcAddress, _to)
         ])
         const result = { ethTransferFee:ethTransferFee.toFixed(9), erc20TransferFee:erc20TransferFee.toFixed(9) }
         return result
@@ -66,8 +68,26 @@ const collectFeeEstimate = async(account:any) =>{
     }
 }
 
-export const getEthTransferFee = async () => {
-    const account = useStarkNetAccount();
-    const feeEstimate = await collectFeeEstimate(account);
+export const getEthTransferFee = async (network:string) => {
+    let _provider
+    let _pvtKey
+    let _usdcAddress
+    let _from
+    let _to
+    if (network === 'goerli'){
+        _provider = tn_provider
+        _pvtKey = SN_PVT_KEY_TN
+        _from = FROM_ADDRESS_SN_TESTNET
+        _to = TO_ADDRESS_SN_TESTNET
+        _usdcAddress = USDC_CONTRACT_ADDRESS_SN_TESTNET
+    } else {
+        _provider = provider
+        _pvtKey = SN_PVT_KEY
+        _from = FROM_ADDRESS_SN_MAINNET
+        _to = TO_ADDRESS_SN_MAINNET
+        _usdcAddress = USDC_CONTRACT_ADDRESS_SN
+    }
+    const account = useStarkNetAccount(_provider, _pvtKey, _from);
+    const feeEstimate = await collectFeeEstimate(account, _to, _usdcAddress);
     return feeEstimate;
 };

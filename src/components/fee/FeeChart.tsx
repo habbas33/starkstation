@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 
 import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Numeral from 'numeral';
+import { AppContext } from '../../context/AppContext';
 
 export default function FeeChart(props: {
     data:any
@@ -18,17 +19,20 @@ export default function FeeChart(props: {
       if (data) {
         let uniqueTimeFrames:any = [];
         const _chartData = data.filter((item:any) => {
+            const sn_value_exists = Object.keys(item).filter((key) => key.includes('sn_value')).length
             const isDuplicate = uniqueTimeFrames.includes(item.time);
-            if (!isDuplicate) {
+            if (!isDuplicate && sn_value_exists) {
                 uniqueTimeFrames.push(item.time);
                 return true;
             }
             return false;
         })
+
+        // console.log(_chartData)
         setChartData(_chartData)
       }
     }, [data])
-
+    // console.log("isLoading",isLoading)
     const displayUnit = chartDisplay === "avgGasUsed" ? "Gwei" : currency.toUpperCase()
     return (
         <div className={`h-[300px] 2xl:h-[400px] drop-shadow-xl w-full rounded-3xl rounded-2xl  self-end`}>
@@ -116,11 +120,12 @@ export default function FeeChart(props: {
 
 const CustomTooltip = (props:{ active:any, payload:any, label:any, timeFrame:string, displayUnit:string }) => {
     const {active, payload, label, timeFrame, displayUnit} = props;
+    const { network } = useContext(AppContext)
     if (active && payload && payload.length) {
         const date = toNiceDateYear(label, timeFrame)
-        const snValue = toNiceValue(payload[0].value, displayUnit)
-        const ethValue = toNiceValue(payload[1].value, displayUnit)
-        const l2vsl1 = toK_percent_float(payload[2].value)
+        const snValue = toNiceValue(payload[0]?.value, displayUnit, network)
+        const ethValue = toNiceValue(payload[1]?.value, displayUnit, network)
+        const l2vsl1 = toK_percent_float(payload[2]?.value)
       return (
         <div className="custom-tooltip" style={{
                 padding: '10px 14px',
@@ -150,11 +155,15 @@ export const toK_percent = (num:any) => {
 };
 
 export const toK_percent_float = (num:any) => {
-    return Numeral(num*100).format('0.[00] a').concat(" %");
+    return Numeral(num*100).format('0.[0000] a').concat(" %");
 };
 
-export const toNiceValue = (num:any,unit:string) => {
-    return (Numeral(num).format('0.[000000]a').concat(" ",unit));
+export const toNiceValue = (num:any,unit:string,network:string) => {
+    if(network === 'goerli'){
+        return (num.toFixed(9).concat(" ",unit));
+    } else {
+        return (Numeral(num).format('0.[000000]a').concat(" ",unit));
+    }
 };
 
 export const toNiceDateYear = (date:any, timeFrame:string) => {

@@ -19,8 +19,10 @@ export default function LatencyChart(props: {
         if (data) {
             let uniqueData:any = [];
             const _chartData = data.filter((item:any) => {
+                const sn_value_exists = Object.keys(item).filter((key) => key.includes('sn_value')).length
+                const normalDensityZx_exists = Object.keys(item).filter((key) => key.includes('normalDensityZx')).length
                 const isDuplicate = uniqueData.includes(isLatencyChart?item.time:item.value);
-                if (!isDuplicate) {
+                if (!isDuplicate && (sn_value_exists || normalDensityZx_exists)) {
                     uniqueData.push(item.time);
                     return true;
                 }

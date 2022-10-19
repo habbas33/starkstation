@@ -1,9 +1,10 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
-import LatencyChart from './LatencyChart';
 import Numeral from 'numeral';
+import LatencyChart from './LatencyChart';
+import { AppContext } from '../../context/AppContext';
 
 interface IData {
     time: string;
@@ -27,6 +28,7 @@ export default function LatencyPanel(props: {
     setTimeFrame:any
 }) {
     const {snDetailLoading, snBlockLoading, ethDetailLoading, snDetailData, snBlockData, ethDetailData, timeFrame, setTimeFrame } = props;
+    const { network } = useContext(AppContext)
     const [chartLoading, setChartLoading] = useState<boolean>(false);
     const [lastUpdated, setLastUpdated] = useState<any>(0);
     const [chartData, setChartData] = useState<IChartData[]>([]);
@@ -71,6 +73,8 @@ export default function LatencyPanel(props: {
             });
             const sortedDistribution = distribution_data.sort((a:any,b:any)=> a.value-b.value)
             setDistributionData(sortedDistribution)
+            
+            setChartLoading(false);
         }
     }, [avgBlockLatency_SN]);
 
@@ -84,8 +88,13 @@ export default function LatencyPanel(props: {
     }, [ethDetailData]);
 
     useEffect(() => {
-        if(avgBlockLatency_ETH){
+        if (avgBlockLatency_ETH.length && avgBlockLatency_SN.length) {
             setChartLoading(true);
+        }
+    }, [network]);
+
+    useEffect(() => {
+        if(avgBlockLatency_ETH){
             let _avgBlockLatency: IChartData[] = []
             avgBlockLatency_ETH.forEach((v,i) => {
                 let snValue = avgBlockLatency_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') > -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
@@ -96,9 +105,6 @@ export default function LatencyPanel(props: {
                 _avgBlockLatency.push(_entry)
             });
             setChartData(_avgBlockLatency.reverse());
-                    
-           
-            setChartLoading(false);
         }
     }, [ avgBlockLatency_ETH, avgBlockLatency_SN ]);
 
@@ -151,19 +157,19 @@ export default function LatencyPanel(props: {
                 </div>
                 <div className="flex flex-col justify-between order-2 lg:order-none py-5 px-0 2xl:p-5 bg-box rounded-lg bg-gradient-to-br from-[#0d1b3d] via-[#081128] to-transparent">
                      <h1 className="text-gray-400 text-lg text-center py-5">AVERAGE BLOCK LATENCY</h1>
-                    <LatencyChart data={chartData} isLoading={snDetailLoading && ethDetailLoading && chartLoading} chartDisplay={"blockLatency"} timeFrame={timeFrame}/>
+                    <LatencyChart data={chartData} isLoading={snDetailLoading || ethDetailLoading || chartLoading} chartDisplay={"blockLatency"} timeFrame={timeFrame}/>
                 </div>
                 <div className="flex flex-col justify-between order-3 lg:order-none py-5 px-0 2xl:p-5 bg-box rounded-lg bg-gradient-to-br from-[#0d1b3d] via-[#081128] to-transparent">
                     <h1 className="text-gray-400 text-lg text-center py-5">DISTRIBUTION</h1>
                     <div className="flex flex-col">
-                        <LatencyChart data={distributionData} isLoading={snDetailLoading && ethDetailLoading && chartLoading} chartDisplay={"distribution"} timeFrame={timeFrame}/>
-                        <span className="text-gray-300 text-right font-semibold text-[#fb7185] text-xs py-1 pr-[40px] Robo">VARIANCE: {Numeral(variance).format('0.[0000]a')}</span>
+                        <LatencyChart data={distributionData} isLoading={snDetailLoading || ethDetailLoading || chartLoading} chartDisplay={"distribution"} timeFrame={timeFrame}/>
+                        <span className={`${chartLoading?"hidden":""} text-gray-300 text-right font-semibold text-[#fb7185] text-xs py-1 pr-[40px] Robo"`}>VARIANCE: {Numeral(variance).format('0.[0000]a')}</span>
                     </div>
                 </div>
                 <div className="flex order-last lg:order-none justify-between items-center text-sm">
                     <div>LATEST BLOCK: {snBlock?.block_number}</div> 
-                    <div className="hidden xl:block">UPDATED: {lastUpdated} SECONDS AGO</div> 
-                    <div className="block xl:hidden">UPDATED: {lastUpdated}s AGO</div> 
+                    <div className="hidden 2xl:block">UPDATED: {lastUpdated} SECONDS AGO</div> 
+                    <div className="block 2xl:hidden">UPDATED: {lastUpdated}s AGO</div> 
                 </div>
                 <div className="flex order-1 lg:order-none justify-end items-center text-sm lg:col-span-2">
                     <div className="mr-2 ">TIME FRAME</div> 

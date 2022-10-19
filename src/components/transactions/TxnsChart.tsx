@@ -18,8 +18,9 @@ export default function TxnsChart(props: {
       if (data) {
         let uniqueTimeFrames:any = [];
         const _chartData = data.filter((item:any) => {
+            const sn_value_exists = Object.keys(item).filter((key) => key.includes('sn_value')).length
             const isDuplicate = uniqueTimeFrames.includes(item.time);
-            if (!isDuplicate) {
+            if (!isDuplicate && sn_value_exists) {
                 uniqueTimeFrames.push(item.time);
                 return true;
             }

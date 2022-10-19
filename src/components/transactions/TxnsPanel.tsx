@@ -1,8 +1,9 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
 import TxnsChart from './TxnsChart';
+import { AppContext } from '../../context/AppContext';
 
 interface IData {
     time: string;
@@ -26,6 +27,7 @@ export default function TxnsPanel(props: {
     setTimeFrame:any
 }) {
     const {snDetailLoading, snBlockLoading, ethDetailLoading, snDetailData, snBlockData, ethDetailData, timeFrame, setTimeFrame } = props;
+    const { network } = useContext(AppContext)
     const [chartLoading, setChartLoading] = useState<boolean>(false);
     const [lastUpdated, setLastUpdated] = useState<any>(0);
     const [chartDisplay, setChartDisplay] = useState<string>('tps');
@@ -113,6 +115,12 @@ export default function TxnsPanel(props: {
         }
     }, [chartDisplay,avgTpb_ETH,avgTps_SN]);
 
+    useEffect(() => {
+        if (avgTpb_ETH.length && avgTps_SN.length) {
+            setChartLoading(true);
+        }
+    }, [network]);
+
     const handleTimeFrame = (period:string) => {
         setTimeFrame(period)
     }
@@ -181,12 +189,12 @@ export default function TxnsPanel(props: {
                 <div className="flex flex-col justify-between order-1 lg:order-none py-5 px-0 2xl:p-5 bg-box rounded-lg bg-gradient-to-br from-[#0d1b3d] via-[#081128] to-transparent">
                     {chartDisplay === 'tps' && <h1 className="text-gray-400 text-lg text-center py-5">TRANSACTIONS PER SECOND (TPS)</h1>}
                     {chartDisplay === 'tpb' && <h1 className="text-gray-400 text-lg text-center py-5">TRANSACTIONS PER BLOCK (TPB)</h1>}
-                    <TxnsChart data={chartData} isLoading={snDetailLoading && ethDetailLoading && chartLoading} chartDisplay={chartDisplay} timeFrame={timeFrame}/>
+                    <TxnsChart data={chartData} isLoading={snDetailLoading || ethDetailLoading || chartLoading} chartDisplay={chartDisplay} timeFrame={timeFrame}/>
                 </div>
                 <div className="flex order-last lg:order-none justify-between items-center text-sm">
                     <div>LATEST BLOCK: {snBlock?.block_number}</div> 
-                    <div className="hidden xl:block">UPDATED: {lastUpdated} SECONDS AGO</div> 
-                    <div className="block xl:hidden">UPDATED: {lastUpdated}s AGO</div> 
+                    <div className="hidden 2xl:block">UPDATED: {lastUpdated} SECONDS AGO</div> 
+                    <div className="block 2xl:hidden">UPDATED: {lastUpdated}s AGO</div> 
                 </div>
                 <div className="flex justify-end items-center text-sm">
                     <div className="mr-2 ">TIME FRAME</div> 

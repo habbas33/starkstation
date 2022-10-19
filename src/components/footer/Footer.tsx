@@ -41,7 +41,7 @@ export default function Footer() {;
                     <h1 className="font-semibold">LEGAL</h1>
                     <div  className='sm:mt-2'>
                         <div className='text-start my-2 cursur-pointer hover:text-gray-500'>
-                            <NavLink to="/disclaimer">Disclaimer</NavLink>
+                            <NavLink to="/disclaimer">*Disclaimer</NavLink>
                         </div>
                     </div>
                 </div>

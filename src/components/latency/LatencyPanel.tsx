@@ -23,14 +23,17 @@ export default function LatencyPanel(props: {
     snBlockLoading: boolean
     snBlockData:any
     ethDetailLoading:boolean
+    snProofData:any
+    snProofLoading:boolean
     ethDetailData:any
     timeFrame:string
     setTimeFrame:any
 }) {
-    const {snDetailLoading, snBlockLoading, ethDetailLoading, snDetailData, snBlockData, ethDetailData, timeFrame, setTimeFrame } = props;
+    const {snDetailLoading, snBlockLoading, ethDetailLoading, snProofLoading, snDetailData, snBlockData, snProofData, ethDetailData, timeFrame, setTimeFrame } = props;
     const { network } = useContext(AppContext)
     const [chartLoading, setChartLoading] = useState<boolean>(false);
     const [lastUpdated, setLastUpdated] = useState<any>(0);
+    const [chartDisplay, setChartDisplay] = useState<string>('actualProof');
     const [chartData, setChartData] = useState<IChartData[]>([]);
     
     const [avgBlockLatency_SN, setAvgBlockLatency_SN] = useState<IData[]>([]);    
@@ -39,6 +42,7 @@ export default function LatencyPanel(props: {
     const [variance, setVariance] = useState<number>(0)
     
     const snBlock = snBlockData?.detail[0];
+    const snProof = snProofData?.detail[0];
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -51,10 +55,11 @@ export default function LatencyPanel(props: {
     useEffect(() => {
         if(snDetailData){
             const timeFormat = timeFrame === '1d' ? 'MMM DD, YYYY' : 'MMM DD, YYYY HH:00'
-            const _avgBlockLatency: IData[] = snDetailData.map((item: any) => ({time:dayjs(item?.timestamp*1000).format(timeFormat), value:item?.blockLatency}));
+            const chartValue = chartDisplay === 'actualProof'? 'actualProofTime' :chartDisplay === 'l1'?'blockL1CreationTime':'blockLatency'
+            const _avgBlockLatency: IData[] = snDetailData.map((item: any) => ({time:dayjs(item?.timestamp*1000).format(timeFormat), value:item?.[chartValue]}));
             setAvgBlockLatency_SN(_avgBlockLatency);
         }
-    }, [snDetailData]);
+    }, [snDetailData, chartDisplay]);
 
     useEffect(() => {
         if(avgBlockLatency_SN.length){
@@ -91,7 +96,7 @@ export default function LatencyPanel(props: {
         if (avgBlockLatency_ETH.length && avgBlockLatency_SN.length) {
             setChartLoading(true);
         }
-    }, [network]);
+    }, [network,chartDisplay]);
 
     useEffect(() => {
         if(avgBlockLatency_ETH){
@@ -117,36 +122,70 @@ export default function LatencyPanel(props: {
             <h1 className="text-2xl text-white text-center">Block Creation Time</h1>
             <h1 className="text-lg py-1 text-gray-400 text-center">at scale the STARK prover and verifier are fastest in class</h1>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 my-8 text-gray-400 drop-shadow-2xl">
-                <div className="grid order-4 lg:order-none grid-rows-3 gap-4"> 
-                    <div className={`bg-box text-center rounded-lg p-5`}>
-                        <span>BlOCK LATENCY (SECONDS)</span>
-                        <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
-                            {!snBlockLoading ? 
-                                <> {snBlock?.blockLatency.toFixed(2)} </> 
-                                :
-                                <div className= "flex justify-center">
-                                    <SpinnerCircular size={20} thickness={100} speed={118} color="#fff1f2" secondaryColor="#0c4a6e" /> 
-                                </div>
-                            }
-                        </h1>
-                    </div>
-                        
-                    <div className={`row-span-2 bg-box rounded-lg p-5`}>
-                        <div className="table-wrp max-h-64 w-full text-sm pr-10">
+                <div onClick={()=>setChartDisplay('actualProof')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "actualProof" ? "border-4 border-sky-900" : ""}`}>
+                    <span>ACTUAL PROOF TIME (SECONDS)</span>
+                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                        {!snBlockLoading ? 
+                            <> {snProof?.actualProofTime.toFixed(2)} </> 
+                            :
+                            <div className= "flex justify-center">
+                                <SpinnerCircular size={28} thickness={100} speed={118} color="#fff1f2" secondaryColor="#0c4a6e" /> 
+                            </div>
+                        }
+                    </h1>
+                </div>
+                <div onClick={()=>setChartDisplay('l1')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "l1" ? "border-4 border-sky-900" : ""}`}>
+                    <span>L1 BLOCK CREATION TIME (SECONDS)</span>
+                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                        {!snBlockLoading ? 
+                            <> {snProof?.blockL1CreationTime.toFixed(2)} </> 
+                            :
+                            <div className= "flex justify-center">
+                                <SpinnerCircular size={28} thickness={100} speed={118} color="#fff1f2" secondaryColor="#0c4a6e" /> 
+                            </div>
+                        }
+                    </h1>
+                </div>
+                <div onClick={()=>setChartDisplay('l2')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "l2" ? "border-4 border-sky-900" : ""}`}>
+                    <span>L2 BLOCK CREATION TIME (SECONDS)</span>
+                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                        {!snBlockLoading ? 
+                            <> {snBlock?.blockLatency.toFixed(2)} </> 
+                            :
+                            <div className= "flex justify-center">
+                                <SpinnerCircular size={28} thickness={100} speed={118} color="#fff1f2" secondaryColor="#0c4a6e" /> 
+                            </div>
+                        }
+                    </h1>
+                </div>
+                <div className="grid order-4 lg:order-none gap-4"> 
+                    <div className={`row-span-2 bg-box rounded-lg p-10`}>
+                        <div className="table-wrp max-h-[18rem] w-full text-sm pr-5">
                         <table className="w-full table-fixed w-full ">
                             <thead className="sticky bg-box top-0">
                                 <tr>
                                     <th className="text-start pb-4">BLOCK</th>
-                                    <th className="text-end pb-4">LATENCY (sec.)</th>
+                                    {chartDisplay === "actualProof" && <th className="text-end pb-4">PROOF TIME (sec.)</th>}
+                                    {chartDisplay === "l1" && <th className="text-end pb-4">L1 BLOCK LATENCY (sec.)</th>}
+                                    {chartDisplay === "l2" && <th className="text-end pb-4">L2 BLOCK LATENCY (sec.)</th>}
                                 </tr>
                             </thead>
 
-                            <tbody className="h-64 text-white text-lg overflow-y-scroll Robo">
-                                {snBlockData?.detail && snBlockData?.detail.map((val:any, key:number) => {
+                            <tbody className="h-[18rem] text-white text-lg overflow-y-scroll Robo">
+                                {chartDisplay === "l2" && snBlockData?.detail && snBlockData?.detail.map((val:any, key:number) => {
                                     return (
                                             <tr key={key}>
                                                 <td className="text-start py-2">#{val?.block_number}</td>
                                                 <td className="text-end">{val?.blockLatency}</td>
+                                            </tr>
+                                    )
+                                })}
+                                {chartDisplay != "l2" && snProofData?.detail && snProofData?.detail.map((val:any, key:number) => {
+                                    return (
+                                            <tr key={key}>
+                                                <td className="text-start py-2">#{val?.block_number}</td>
+                                                {chartDisplay === "actualProof" && <td className="text-end">{val?.actualProofTime}</td>}
+                                                {chartDisplay === "l1" && <td className="text-end">{val?.blockL1CreationTime}</td>}
                                             </tr>
                                     )
                                 })}

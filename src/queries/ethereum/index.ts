@@ -50,3 +50,30 @@ export const useEthBlocksQuery = () => {
     };
     return useQuery<{ [key in string]: any }>('useEthDetailQuery1d', fetch);
   };
+
+  export const useEthFeeEstimateQuery = (network:string, period:string, limit:string, skip:string) => {
+    const fetch = async () => {
+      const route = network === 'goerli' ?  `${network}/` : ''
+      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/${route}feeestimate?period=${period}&limit=${limit}&skip=${skip}`, {headers});
+      return data;
+    };
+    return useQuery<{ [key in string]: any }>('useEthFeeEstimateQuery', fetch);
+  };
+
+  export const useEthFeeEstimateQuery4h = (network:string) => {
+    const fetch = async () => {
+      const route = network === 'goerli' ?  `${network}/` : ''
+      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/${route}detail?period=4h`, {headers});
+      return data;
+    };
+    return useQuery<{ [key in string]: any }>('useEthFeeEstimateQuery4h', fetch);
+  };
+
+  export const useEthFeeEstimateQuery1d = (network:string) => {
+    const fetch = async () => {
+      const route = network === 'goerli' ?  `${network}/` : ''
+      const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}eth/${route}detail?period=24h`, {headers});
+      return data;
+    };
+    return useQuery<{ [key in string]: any }>('useEthFeeEstimateQuery1d', fetch);
+  };

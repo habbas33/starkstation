@@ -140,7 +140,7 @@ export default function TxnsPanel(props: {
                                     <> {snBlock?.transactionsPerSecond.toFixed(4)} </> 
                                     :
                                     <div className= "flex justify-center">
-                                        <SpinnerCircular size={20} thickness={100} speed={118} color="#fff1f2" secondaryColor="#0c4a6e" /> 
+                                        <SpinnerCircular size={28} thickness={100} speed={118} color="#fff1f2" secondaryColor="#0c4a6e" /> 
                                     </div>
                                 }
                             </h1>
@@ -153,7 +153,7 @@ export default function TxnsPanel(props: {
                                     <> {snBlock?.transactionsPerBlock} </> 
                                     :
                                     <div className= "flex justify-center">
-                                        <SpinnerCircular size={20} thickness={100} speed={118} color="#fff1f2" secondaryColor="#0c4a6e" /> 
+                                        <SpinnerCircular size={28} thickness={100} speed={118} color="#fff1f2" secondaryColor="#0c4a6e" /> 
                                     </div>
                                 }
                             </h1>

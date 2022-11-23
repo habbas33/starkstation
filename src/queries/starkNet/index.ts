@@ -31,6 +31,16 @@ export const useSnBlockQuery = (network:string) => {
   });
 };
 
+export const useSnProofQuery = (network:string) => {
+  const fetch = async () => {
+    let { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}stark/${network}/blockLatency?limit=12`, {headers});
+    return {detail:data, lastUpdated: dayjs()};
+  };
+  return useQuery<{ detail:{[key in string]: any}, lastUpdated:any }>('useSnProofQuery', fetch,  {
+    refetchInterval: 60000,
+  });
+};
+
 export const useSnDetailQuery4h = (network:string) => {
   const fetch = async () => {
     const { data } = await axios.get(`${STARKSTAION_API_ENDPOINT}stark/${network}/detail?period=4h`, {headers});

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Test, Main, Disclaimer } from './pages';
+import { Main, Disclaimer, TermsOfUse } from './pages';
 import { Navbar } from './components/navbar';
 import { Footer } from './components/footer';
 import { PriceContextProvider } from './context/PriceContext';
@@ -24,9 +24,10 @@ function App() {
               <Route path="/disclaimer" element={ <Disclaimer /> } />
             </Routes>
 
-            {/* <Routes>
-              <Route path="/test" element={ <Test /> } />
-            </Routes> */}
+            <Routes>
+              <Route path="/terms-of-use" element={ <TermsOfUse /> } />
+            </Routes>
+
             <Footer/>
           </AppContextProvider>
         </PriceContextProvider>

@@ -19,8 +19,9 @@ export default function LatencyChart(props: {
         if (data) {
             let uniqueData:any = [];
             const _chartData = data.filter((item:any) => {
-                const sn_value_exists = Object.keys(item).filter((key) => key.includes('sn_value')).length
-                const normalDensityZx_exists = Object.keys(item).filter((key) => key.includes('normalDensityZx')).length
+                const sn_value_exists = Object.keys(item).filter((key) => key.includes('sn_value')).length && item?.sn_value != null
+                const normalDensityZx_exists = Object.keys(item).filter((key) => key.includes('normalDensityZx')).length && item?.value != null && item?.normalDensityZx != null
+                // const value_exists = item.value?
                 const isDuplicate = uniqueData.includes(isLatencyChart?item.time:item.value);
                 if (!isDuplicate && (sn_value_exists || normalDensityZx_exists)) {
                     uniqueData.push(item.time);
@@ -28,13 +29,14 @@ export default function LatencyChart(props: {
                 }
                 return false;
             })
+            // console.log(_chartData)
             setChartData(_chartData)
         }
     }, [data])
     
     const rightMargin = isLatencyChart ? 5 : 40;
     return (
-        <div className={`h-[300px] drop-shadow-xl w-full rounded-3xl rounded-2xl  self-end`}>
+        <div className={`h-[240px] drop-shadow-xl w-full rounded-3xl rounded-2xl  self-end`}>
             {!isLoading && data.length ? (
                 <ResponsiveContainer width="100%" height="100%">
                 <LineChart

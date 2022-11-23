@@ -41,7 +41,7 @@ export default function TxnsChart(props: {
                     margin={{
                     top: 5,
                     right: 5,
-                    left: 40,
+                    left: 5,
                     bottom: 5,
                     }}
                 >
@@ -61,9 +61,24 @@ export default function TxnsChart(props: {
                     axisLine={true}
                     tickLine={false}
                     type="number"
+                    dataKey="eth_value"
                     orientation="right"
                     tickFormatter={tick => toK(tick)}
                     interval="preserveEnd"
+                    fontSize={10}
+                    fontFamily='Roboto Mono, monospace'
+                    stroke="#81cefa"
+                    padding={{ top: 20, bottom: 5 }}
+                    />
+                    <YAxis
+                    yAxisId={1}
+                    dataKey="sn_value"
+                    axisLine={true}
+                    tickLine={false}
+                    type="number"
+                    orientation="left"
+                    tickFormatter={tick => toK(tick)}
+                    interval="preserveStartEnd"
                     fontSize={10}
                     fontFamily='Roboto Mono, monospace'
                     stroke="#81cefa"
@@ -86,8 +101,8 @@ export default function TxnsChart(props: {
                     wrapperStyle={{ top: -70, left: -10, outline: 'none' }}
                     />
                     <Legend />
-                    <Line type="monotone" name="on Starknet" dataKey="sn_value" animationDuration={500} isAnimationActive={true} legendType="star" stroke={'#fb7185'} strokeWidth={2} dot={false}  />
-                    <Line type="monotone" name="on Ethereum" dataKey="eth_value" animationDuration={500} isAnimationActive={true} legendType="diamond" stroke={'#23a6f1'} strokeWidth={2} dot={false}  />
+                    <Line type="monotone" yAxisId={1} name="on Starknet" dataKey="sn_value" animationDuration={500} isAnimationActive={true} legendType="star" stroke={'#fb7185'} strokeWidth={2} dot={false}  />
+                    <Line type="monotone" yAxisId={0} name="on Ethereum" dataKey="eth_value" animationDuration={500} isAnimationActive={true} legendType="diamond" stroke={'#23a6f1'} strokeWidth={2} dot={false}  />
                 </LineChart>
                 </ResponsiveContainer>
             ) : (

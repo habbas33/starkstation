@@ -34,7 +34,7 @@ export default function BridgeChart(props: {
     
     const displayUnit = currency.toUpperCase()
     return (
-        <div className={`h-[300px] 2xl:h-[400px] drop-shadow-xl w-full rounded-3xl rounded-2xl  self-end`}>
+        <div className={`h-[240px] 2xl:h-[400px] drop-shadow-xl w-full rounded-3xl rounded-2xl  self-end`}>
             {!isLoading && data.length ? (
                 <ResponsiveContainer width="100%" height="100%">
                 <LineChart

@@ -58,8 +58,15 @@ export default function FeePanel(props: {
         }, 1000);
 
         const getFeeEstimate = async() =>{
-            const x = await getEthTransferFee(network)
-            setFeeEstimate(x);            
+            // const x = await getEthTransferFee(network)
+            let _feeEstimate = snBlock?.feeEstimate
+            if (_feeEstimate) {
+                _feeEstimate.ethTransferFee = _feeEstimate.ethTransferFee.toFixed(9)
+                _feeEstimate.erc20TransferFee = _feeEstimate.erc20TransferFee.toFixed(9) 
+                _feeEstimate.swapFee = _feeEstimate.swapFee.toFixed(9) 
+                _feeEstimate.nftMintFee = _feeEstimate.nftMintFee.toFixed(9)  
+                setFeeEstimate(_feeEstimate);    
+            }        
         }
         getFeeEstimate();
         return () => clearInterval(interval);
@@ -217,7 +224,8 @@ export default function FeePanel(props: {
                         </h1>
                     </div>
                     <div onClick={()=>setChartDisplay('swapFee')} className={`bg-box rounded-lg p-3 px-4 2xl:p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "swapFee" ? "border-4 border-sky-900" : ""}`}>
-                        <span className='text-xs sm:text-sm 2xl:text-lg'>SWAP FEE (MY SWAP)</span>
+                        <span className='text-xs sm:text-sm 2xl:text-lg'>SWAP FEE</span>
+                        <span className='hidden sm:inline text-xs sm:text-sm 2xl:text-lg'> (MY SWAP)</span>
                         <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                             {!snBlockLoading  && !chartLoading? 
                                 <> {swapFeeFeeLatest} {currency.toUpperCase()} </> 
@@ -229,7 +237,8 @@ export default function FeePanel(props: {
                         </h1>
                     </div>
                     <div onClick={()=>setChartDisplay('nftMintFee')} className={`bg-box rounded-lg p-3 px-4 2xl:p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "nftMintFee" ? "border-4 border-sky-900" : ""}`}>
-                        <span className='text-xs sm:text-sm 2xl:text-lg'>NFT MINT FEE (MINT SQUARE)</span>
+                        <span className='text-xs sm:text-sm 2xl:text-lg'>NFT MINT FEE</span>
+                        <span className='hidden sm:inline text-xs sm:text-sm 2xl:text-lg'> (MINT SQUARE)</span>
                         <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                             {!snBlockLoading  && !chartLoading? 
                                 <> {nftMintFeeLatest} {currency.toUpperCase()} </> 

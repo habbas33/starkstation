@@ -55,6 +55,7 @@ export default function BridgePanel(props: {
     const [bridgeDepositFeeData_ETH, setBridgeDepositFeeData_ETH] = useState<IData[]>([]);
     const [bridgeWithdrawFeeData_ETH, setBridgeWithdrawFeeData_ETH] = useState<IData[]>([]);
     const isCurrencyEth: boolean = currency === 'eth'? true : false;
+    const snBlock = snBlockData?.detail[0];
 
     useEffect(() => { 
         refetch();
@@ -75,8 +76,10 @@ export default function BridgePanel(props: {
         }, 1000);
 
         const getFeeEstimate = async() =>{
-            const x = await getBridgeFee(network)
-            const initiateWithdrawFee = x.initiateWithdrawFee;
+            const initiateWithdrawFee = snBlock?.feeEstimate?.inititateWithdrawFee.toFixed(9)
+            // console.log(initiateWithdrawFee)
+            // const x = await getBridgeFee(network)
+            // const initiateWithdrawFee = x.initiateWithdrawFee;
             setInitiateWithdrawFeeLatest(initiateWithdrawFee); 
             setChartLoading(false);  
         }
@@ -126,18 +129,6 @@ export default function BridgePanel(props: {
                 setBridgeDepositFeeData_ETH(_bridgeDepositFeeData);
                 setBridgeWithdrawFeeData_ETH(_bridgeWithdrawFeeData);
             }
-            // if(ethFeeEstimateData && ethDetailData){
-            //     const _ethFeeEstimateData = ethFeeEstimateData.map((v:any,i:any) => ({
-            //         timestamp: v.timestamp,
-            //         price: ethDetailData.filter((item:any) => item.timestamp === v.timestamp)[0].ethPrice,
-            //         feeEstimate: v.feeEstimate
-            //     }))
-            //     // console.log(_ethFeeEstimateData)
-            //     const _bridgeDepositFeeData: IData[] = _ethFeeEstimateData.map((item: any) => ({time:dayjs(item?.timestamp*1000).format('MMM DD, YYYY HH:00'), value:item?.feeEstimate?.bridgeDepositFee, price:item?.price}));
-            //     const _bridgeWithdrawFeeData: IData[] = _ethFeeEstimateData.map((item: any) => ({time:dayjs(item?.timestamp*1000).format('MMM DD, YYYY HH:00'), value:item?.feeEstimate?.bridgeWithdrawFee, price:item?.price}));
-            //     setBridgeDepositFeeData_ETH(_bridgeDepositFeeData);
-            //     setBridgeWithdrawFeeData_ETH(_bridgeWithdrawFeeData);
-            // }
         }
     }, [ethDetailData, ethFeeEstimateData, network]);
 
@@ -179,8 +170,8 @@ export default function BridgePanel(props: {
             <h1 className="text-lg py-1 text-gray-400 text-center">preserving the security of L1 Ethereum by producing STARK proofs off-chain</h1>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-8 text-gray-400 drop-shadow-xl">
                 <div className={`bg-box rounded-lg text-center p-5`}>
-                    <span >STARKGATE DEPOSIT FEE</span>
-                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                    <span className= "text-xs sm:text-sm 2xl:text-lg">STARKGATE DEPOSIT FEE</span>
+                    <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                         {!snBlockLoading && !chartLoading? 
                             <> {depositFeeLatest} {currency.toUpperCase()} </> 
                             :
@@ -191,8 +182,8 @@ export default function BridgePanel(props: {
                     </h1>
                 </div>
                 <div className={`bg-box rounded-lg text-center p-5`}>
-                    <span>STARKGATE WITHDRAWAL FEE (TOTAL)</span>
-                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                    <span className= "text-xs sm:text-sm 2xl:text-lg">STARKGATE WITHDRAWAL FEE (TOTAL)</span>
+                    <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                         {!snBlockLoading  && !chartLoading? 
                             <> {totalWithdrawFeeLatest} {currency.toUpperCase()} </> 
                             :

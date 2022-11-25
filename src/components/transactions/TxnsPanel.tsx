@@ -130,12 +130,12 @@ export default function TxnsPanel(props: {
             <h1 className="text-2xl text-white text-center">Transactions Tracker</h1>
             <h1 className="text-lg py-1 text-gray-400 text-center">achieve unlimited scalability with ZK-Rollups</h1>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 my-8 text-gray-400 drop-shadow-xl">
-                <div className="grid order-2 lg:order-none grid-rows-3 gap-4"> 
+                <div className="grid order-2 lg:order-none grid-rows-7 gap-4"> 
                     <div className="grid grid-cols-2 gap-2">
                         <div onClick={()=>setChartDisplay('tps')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "tps" ? "border-4 border-sky-900" : ""}`}>
-                            <span className="hidden sm:inline">TXNs PER SECOND</span>
-                            <span className="inline sm:hidden">TPS</span>
-                            <h1 className='text-gray-300 Robo text-2xl lg:text-3xl 2xl:text-4xl py-4'>
+                            <span className="hidden sm:inline text-xs sm:text-sm 2xl:text-lg">TXNs PER SECOND</span>
+                            <span className="inline sm:hidden text-xs sm:text-sm 2xl:text-lg">TPS</span>
+                            <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                                 {!snBlockLoading ? 
                                     <> {snBlock?.transactionsPerSecond.toFixed(4)} </> 
                                     :
@@ -146,9 +146,9 @@ export default function TxnsPanel(props: {
                             </h1>
                         </div>
                         <div onClick={()=>setChartDisplay('tpb')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "tpb" ? "border-4 border-sky-900" : ""}`}>
-                            <span className="hidden sm:inline">TXNs PER BLOCK</span>
-                            <span className="inline sm:hidden">TPB</span>
-                            <h1 className='text-gray-300 Robo text-2xl lg:text-3xl 2xl:text-4xl py-4'>
+                            <span className="hidden sm:inline text-xs sm:text-sm 2xl:text-lg">TXNs PER BLOCK</span>
+                            <span className="inline sm:hidden text-xs sm:text-sm 2xl:text-lg">TPB</span>
+                            <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                                 {!snBlockLoading ? 
                                     <> {snBlock?.transactionsPerBlock} </> 
                                     :
@@ -160,7 +160,7 @@ export default function TxnsPanel(props: {
                         </div>
                     </div>
                         
-                    <div className={`row-span-2 bg-box rounded-lg p-5`}>
+                    <div className={`row-span-5 bg-box rounded-lg p-5`}>
                         <div className="table-wrp max-h-64 w-full text-sm pr-10">
                         <table className="w-full table-fixed w-full ">
                             <thead className="sticky bg-box  top-0">

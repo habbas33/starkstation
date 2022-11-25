@@ -36,7 +36,7 @@ export default function LatencyChart(props: {
     
     const rightMargin = isLatencyChart ? 5 : 40;
     return (
-        <div className={`h-[240px] drop-shadow-xl w-full rounded-3xl rounded-2xl  self-end`}>
+        <div className={`${isLatencyChart? "h-[200px] 2xl:h-[240px]": "h-[180px] 2xl:h-[200px]"} drop-shadow-xl w-full rounded-3xl rounded-2xl  self-end`}>
             {!isLoading && data.length ? (
                 <ResponsiveContainer width="100%" height="100%">
                 <LineChart

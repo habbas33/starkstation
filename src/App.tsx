@@ -9,10 +9,10 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="bg-black text-sm text-red-300 text-right w-full py-1 px-5 sm:px-10 md:px-15 lg:px-20 xl:px-40 2xl:px-60">
+      <div className="bg-black text-sm text-red-300 text-right w-full py-1 px-5 sm:px-10 md:px-15 lg:px-20 xl:px-[8.5rem] 2xl:px-60">
         StarkStation is Alpha!
       </div>
-      <div className =  "min-h-[100vh] px-5 sm:px-10 md:px-15 lg:px-20 xl:px-40 2xl:px-60 py-8 bg-main caret-transparent">
+      <div className =  "min-h-[100vh] px-5 sm:px-10 md:px-15 lg:px-20 xl:px-[8.5rem] 2xl:px-60 py-8 bg-main caret-transparent">
         <PriceContextProvider>
           <AppContextProvider>
             <Navbar/>

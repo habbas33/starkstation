@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 
 import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Symbols, Surface } from 'recharts';
 import Numeral from 'numeral';
 import { AppContext } from '../../context/AppContext';
 
@@ -15,6 +15,7 @@ export default function BlocksChart(props: {
 }) {
     const { data, isLoading, chartDisplay, currency, timeFrame } = props;
     const [chartData, setChartData] = useState<any>([])
+    const [legendState, setLegendState] = useState<boolean[]>([true,true,true])
     useEffect(() => {
       if (data) {
         let uniqueTimeFrames:any = [];
@@ -27,17 +28,44 @@ export default function BlocksChart(props: {
             }
             return false;
         })
-
-        // if (chartDisplay === "verificationCost"){
-        //     console.log(_chartData)
-        // }
-        
         setChartData(_chartData)
       }
     }, [data])
-    // console.log("isLoading",isLoading)
+    
     const displayUnit = chartDisplay === "avgGasUsed" ? "Gwei" : currency.toUpperCase()
-    const marginLeft = chartDisplay === "verificationCost" ? 45 : 5
+    const onlyY0 = legendState.filter(v => v).length === 1;
+    const isL1CostChart = chartDisplay === "verificationCost" ? true : false
+    const marginLeft = 5//chartDisplay === "verificationCost" || onlyY0 ? 45 : 5
+    
+    const handleClick = (index:number) => {
+        if (legendState) {
+            const _legendState = legendState.map(a => {return a});
+            _legendState[index] = !_legendState[index]
+            
+            if ( !isL1CostChart && _legendState.includes(true)) {
+                setLegendState(_legendState);
+            }
+        } 
+    };
+
+    const renderLegend = (props:any) => {
+        const { payload } = props;
+        return (
+          <div className="flex text-xs xs:text-base justify-center items-center">
+            {
+              payload.map((entry:any, index:any) => (
+                <div onClick={()=>handleClick(index)} key={`item-${index}`} className={`flex justify-center items-center text-[${entry.color}] cursor-pointer hover:bg-gray-900 ${legendState[index]?"":'opacity-25'} rounded-md mx-1 px-1`}>
+                    <Surface width={14} height={14}>
+                        <Symbols cx={7} cy={8} type={entry.type} size={60} fill={entry.color} />
+                    </Surface>
+                    <span className="pl-1">{entry.value}</span>
+                </div>
+              ))
+            }
+          </div>
+        );
+    }
+
     return (
         <div className={`h-[240px] drop-shadow-xl w-full rounded-3xl rounded-2xl  self-end`}>
             {!isLoading && data.length ? (
@@ -47,65 +75,65 @@ export default function BlocksChart(props: {
                     width={400}
                     data={chartData}
                     margin={{
-                    top: 5,
-                    right: 5,
-                    left: marginLeft,
-                    bottom: 5,
+                        top: 5,
+                        right: 5,
+                        left: marginLeft,
+                        bottom: 5,
                     }}
                 >
                     <XAxis
-                    dataKey="time"
-                    tickLine={false}
-                    axisLine={true}
-                    interval="preserveEnd"
-                    fontSize={10}
-                    fontFamily='Roboto Mono, monospace'
-                    stroke="#81cefa"
-                    label="time"
-                    tickFormatter={tick => toNiceDate(tick, timeFrame)}
-                    padding={{ left: 20, right: 20 }}
+                        dataKey="time"
+                        tickLine={false}
+                        axisLine={true}
+                        interval="preserveEnd"
+                        fontSize={10}
+                        fontFamily='Roboto Mono, monospace'
+                        stroke="#81cefa"
+                        label="time"
+                        tickFormatter={tick => toNiceDate(tick, timeFrame)}
+                        padding={{ left: 20, right: 20 }}
                     />
                     <YAxis
-                    yAxisId={0}
-                    dataKey= {chartDisplay === "verificationCost" ? "sn_value" :"eth_value" }
-                    axisLine={true}
-                    tickLine={false}
-                    type="number"
-                    orientation="right"
-                    tickFormatter={tick => toK(tick)}
-                    interval="preserveEnd"
-                    fontSize={10}
-                    fontFamily='Roboto Mono, monospace'
-                    stroke="#81cefa"
-                    padding={{ top: 20, bottom: 5 }}
+                        yAxisId={0}
+                        dataKey= {isL1CostChart || (!legendState[1] && legendState[0]) ? "sn_value" : !legendState[1] ? "percent_change" : "eth_value" }
+                        axisLine={true}
+                        tickLine={false}
+                        type="number"
+                        orientation="right"
+                        tickFormatter={tick => onlyY0 && legendState[2] ? toK_percent(tick):toK(tick)}
+                        interval="preserveEnd"
+                        fontSize={10}
+                        fontFamily='Roboto Mono, monospace'
+                        stroke="#81cefa"
+                        padding={{ top: 20, bottom: 5 }}
                     />
                     <YAxis
-                    hide= {chartDisplay === "verificationCost" }
-                    yAxisId={1}
-                    dataKey="percent_change"
-                    domain={[0, 1]}
-                    axisLine={true}
-                    tickLine={false}
-                    type="number"
-                    orientation="left"
-                    tickFormatter={tick => toK_percent(tick)}
-                    interval="preserveStartEnd"
-                    fontSize={10}
-                    fontFamily='Roboto Mono, monospace'
-                    stroke="#81cefa"
-                    padding={{ top: 20, bottom: 5 }}
+                        hide= {isL1CostChart || onlyY0}
+                        yAxisId={1}
+                        dataKey={legendState[2]?"percent_change":"sn_value"}
+                        domain={legendState[2]?[0, 1]:[0, 'auto']}
+                        axisLine={true}
+                        tickLine={false}
+                        type="number"
+                        orientation="left"
+                        tickFormatter={tick => legendState[2]? toK_percent(tick): toK(tick)}
+                        interval="preserveStartEnd"
+                        fontSize={10}
+                        fontFamily='Roboto Mono, monospace'
+                        stroke="#81cefa"
+                        padding={{ top: 20, bottom: 5 }}
                     />
                     <Tooltip
-                    cursor={true}
-                    active={false}
-                    //@ts-ignore
-                    content={<CustomTooltip timeFrame={timeFrame} displayUnit={displayUnit} chartDisplay={chartDisplay}/>}
-                    wrapperStyle={{ top: -70, left: -10, outline: 'none' }}
+                        cursor={true}
+                        active={false}
+                        //@ts-ignore
+                        content={<CustomTooltip timeFrame={timeFrame} displayUnit={displayUnit} isL1CostChart={isL1CostChart} legendState={legendState}/>}
+                        wrapperStyle={{ top: -70, left: -10, outline: 'none' }}
                     />
-                    <Legend />
-                    <Line type="monotone" yAxisId={0} name= {chartDisplay != "verificationCost"?"on Starknet":"Starknet"} dataKey="sn_value" animationDuration={500} isAnimationActive={true} legendType="star" stroke={'#fb7185'} strokeWidth={2} dot={false}  />
-                    {chartDisplay != "verificationCost" && <Line type="monotone" yAxisId={0} name="on Ethereum" dataKey="eth_value" animationDuration={500} isAnimationActive={true} legendType="diamond" stroke={'#23a6f1'} strokeWidth={2} dot={false}  />}
-                    {chartDisplay != "verificationCost" && <Line type="monotone" yAxisId={1} name="L2 vs L1" dataKey="percent_change" animationDuration={500} isAnimationActive={true} legendType="wye" stroke={'#b9b72b'} strokeDasharray="5 5" strokeWidth={1} dot={false}  />}
+                    {!isL1CostChart ? <Legend content={renderLegend}/> : <Legend />}
+                    <Line type="monotone" hide={!legendState[0]} yAxisId={legendState[2]?0:1} name= {!isL1CostChart?"on Starknet":"Starknet"} dataKey="sn_value" animationDuration={500} isAnimationActive={true} legendType="star" stroke={'#fb7185'} strokeWidth={2} dot={false}/>
+                    {!isL1CostChart && <Line hide={!legendState[1]} type="monotone" yAxisId={0} name="on Ethereum" dataKey="eth_value" animationDuration={500} isAnimationActive={true} legendType="diamond" stroke={'#23a6f1'} strokeWidth={2} dot={false}  />}
+                    {!isL1CostChart && <Line hide={!legendState[2]} type="monotone" yAxisId={onlyY0?0:1} name="L2 vs L1" dataKey="percent_change" animationDuration={500} isAnimationActive={true} legendType="wye" stroke={'#b9b72b'} strokeDasharray="5 5" strokeWidth={1} dot={false}  />}
                 </LineChart>
                 </ResponsiveContainer>
             ) : (
@@ -123,14 +151,16 @@ export default function BlocksChart(props: {
     );
 }
 
-const CustomTooltip = (props:{ active:any, payload:any, label:any, timeFrame:string, displayUnit:string, chartDisplay:string }) => {
-    const {active, payload, label, timeFrame, displayUnit, chartDisplay} = props;
+
+
+const CustomTooltip = (props:{ active:any, payload:any, label:any, timeFrame:string, displayUnit:string, isL1CostChart:boolean, legendState:boolean[] }) => {
+    const {active, payload, label, timeFrame, displayUnit, isL1CostChart, legendState} = props;
     const { network } = useContext(AppContext)
     if (active && payload && payload.length) {
         const date = toNiceDateYear(label, timeFrame)
         const snValue = toNiceValue(payload[0]?.value, displayUnit, network)
-        const ethValue = chartDisplay != "verificationCost" ? toNiceValue(payload[1]?.value, displayUnit, network) : '0'
-        const l2vsl1 = toK_percent_float(payload[2]?.value)
+        const ethValue = !isL1CostChart ? toNiceValue(payload[legendState[0] && legendState[1] ? 1 : 0]?.value, displayUnit, network) : '0'
+        const l2vsl1 = toK_percent_float(payload[legendState[0] && legendState[1] ? 2 : !legendState[0] && !legendState[1] ? 0 : 1]?.value)
       return (
         <div className="custom-tooltip" style={{
                 padding: '10px 14px',
@@ -141,11 +171,11 @@ const CustomTooltip = (props:{ active:any, payload:any, label:any, timeFrame:str
                 fontSize: '12px',
             }}>
             <p style={{ paddingTop: 4, paddingBottom: 4 }}>{date}</p>
-            {chartDisplay != "verificationCost" ? 
+            {!isL1CostChart ? 
                 (<>
-                    <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#fb7185]">{`on Starknet : ${snValue}`}</p>
-                    <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#23a6f1]">{`on Ethereum : ${ethValue}`}</p>
-                    <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#b9b72b]">{`L2 vs L1 : ${l2vsl1}`}</p>
+                    {legendState[0] && <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#fb7185]">{`on Starknet : ${snValue}`}</p>}
+                    {legendState[1] && <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#23a6f1]">{`on Ethereum : ${ethValue}`}</p>}
+                    {legendState[2] && <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#b9b72b]">{`L2 vs L1 : ${l2vsl1}`}</p>}
                 </>)
                 :( <>
                     <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#fb7185]">{`Verification Cost : ${snValue}`}</p>

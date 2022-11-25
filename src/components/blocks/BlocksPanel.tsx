@@ -150,8 +150,8 @@ export default function BlocksPanel(props: {
             <h1 className="text-lg py-1 text-gray-400 text-center">permissionless layer of Sequencers and Provers ensures that the network will be censorship-resistant</h1>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 my-8 text-gray-400 drop-shadow-2xl">
                 <div onClick={()=>setChartDisplay('verificationCost')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "verificationCost" ? "border-4 border-sky-900" : ""}`}>
-                    <span>L1 BLOCK VERIFICATION COST</span>
-                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                    <span className= "text-xs sm:text-sm 2xl:text-lg">L1 BLOCK VERIFICATION COST</span>
+                    <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                         {!snProofLoading ? 
                             <> {verificationCostLatest} {currency.toUpperCase()} </> 
                             :
@@ -162,8 +162,8 @@ export default function BlocksPanel(props: {
                     </h1>
                 </div>
                 <div onClick={()=>setChartDisplay('avgTxnFee')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "avgTxnFee" ? "border-4 border-sky-900" : ""}`}>
-                    <span>TOTAL BLOCK FEE</span>
-                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                    <span className= "text-xs sm:text-sm 2xl:text-lg">TOTAL BLOCK FEE</span>
+                    <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                         {!snBlockLoading ? 
                             <> {totalTxnFeeLatest} {currency.toUpperCase()} </> 
                             :
@@ -174,8 +174,8 @@ export default function BlocksPanel(props: {
                     </h1>
                 </div>
                 <div onClick={()=>setChartDisplay('avgGasUsed')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "avgGasUsed" ? "border-4 border-sky-900" : ""}`}>
-                    <span>TOTAL GAS USED</span>
-                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                    <span className= "text-xs sm:text-sm 2xl:text-lg">TOTAL GAS USED</span>
+                    <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                         {!snBlockLoading ? 
                             <> {(snBlock.gasUsedPerblock)/10**9} GWEI</> 
                             :
@@ -186,14 +186,14 @@ export default function BlocksPanel(props: {
                     </h1>
                 </div>
                 <div className="grid order-4 lg:order-none gap-4"> 
-                    <div className={`row-span-2 bg-box rounded-lg p-10`}>
+                    <div className={`row-span-2 bg-box rounded-lg p-5`}>
                         <div className="table-wrp max-h-[18rem] w-full text-sm pr-5">
                         <table className="w-full table-fixed">
                             <thead className="sticky bg-box top-0">
                                 <tr>
                                     <th className="text-start pb-4">BLOCK</th>
-                                    {chartDisplay === "avgTxnFee" && <th className="text-end pb-4 ">BLOCK FEE ({currency.toUpperCase()})</th>}
-                                    {chartDisplay === "avgGasUsed" && <th className="text-end pb-4">GAS USED (GWEI)</th>}
+                                    {chartDisplay === "avgTxnFee" && <th className="text-end pb-4 w-[110%]">BLOCK FEE ({currency.toUpperCase()})</th>}
+                                    {chartDisplay === "avgGasUsed" && <th className="text-end pb-4 w-[110%]">GAS USED (GWEI)</th>}
                                     {chartDisplay === "verificationCost" && <th className="text-end pb-4 w-[110%]">VERIFICATION COST ({currency.toUpperCase()})</th>}
                                 </tr>
                             </thead>

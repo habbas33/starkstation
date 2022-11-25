@@ -120,11 +120,12 @@ export default function LatencyPanel(props: {
     return (
         <div>
             <h1 className="text-2xl text-white text-center">Block Creation Time</h1>
-            <h1 className="text-lg py-1 text-gray-400 text-center">at scale the STARK prover and verifier are fastest in class</h1>
+            {/* <h1 className="text-lg py-1 text-gray-400 text-center">at scale the STARK prover and verifier are fastest in class</h1> */}
+            <h1 className="text-lg py-1 text-gray-400 text-center"></h1>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 my-8 text-gray-400 drop-shadow-2xl">
                 <div onClick={()=>setChartDisplay('actualProof')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "actualProof" ? "border-4 border-sky-900" : ""}`}>
-                    <span>ACTUAL PROOF TIME (SECONDS)</span>
-                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                    <span className= "text-xs sm:text-sm 2xl:text-lg">ACTUAL PROOF TIME (SECONDS)</span>
+                    <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                         {!snBlockLoading ? 
                             <> {snProof?.actualProofTime.toFixed(2)} </> 
                             :
@@ -135,8 +136,8 @@ export default function LatencyPanel(props: {
                     </h1>
                 </div>
                 <div onClick={()=>setChartDisplay('l1')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "l1" ? "border-4 border-sky-900" : ""}`}>
-                    <span>L1 BLOCK CREATION TIME (SECONDS)</span>
-                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                    <span className= "text-xs sm:text-sm 2xl:text-lg">L1 BLOCK CREATION TIME (SECONDS)</span>
+                    <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                         {!snBlockLoading ? 
                             <> {snProof?.blockL1CreationTime.toFixed(2)} </> 
                             :
@@ -147,8 +148,8 @@ export default function LatencyPanel(props: {
                     </h1>
                 </div>
                 <div onClick={()=>setChartDisplay('l2')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "l2" ? "border-4 border-sky-900" : ""}`}>
-                    <span>L2 BLOCK CREATION TIME (SECONDS)</span>
-                    <h1 className='text-gray-300 Robo text-3xl 2xl:text-4xl py-4'>
+                    <span className= "text-xs sm:text-sm 2xl:text-lg">L2 BLOCK CREATION TIME (SECONDS)</span>
+                    <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                         {!snBlockLoading ? 
                             <> {snBlock?.blockLatency.toFixed(2)} </> 
                             :
@@ -159,38 +160,38 @@ export default function LatencyPanel(props: {
                     </h1>
                 </div>
                 <div className="grid order-4 lg:order-none gap-4"> 
-                    <div className={`row-span-2 bg-box rounded-lg p-10`}>
-                        <div className="table-wrp max-h-[18rem] w-full text-sm pr-5">
-                        <table className="w-full table-fixed w-full ">
-                            <thead className="sticky bg-box top-0">
-                                <tr>
-                                    <th className="text-start pb-4">BLOCK</th>
-                                    {chartDisplay === "actualProof" && <th className="text-end pb-4">PROOF TIME (sec.)</th>}
-                                    {chartDisplay === "l1" && <th className="text-end pb-4">L1 BLOCK LATENCY (sec.)</th>}
-                                    {chartDisplay === "l2" && <th className="text-end pb-4">L2 BLOCK LATENCY (sec.)</th>}
-                                </tr>
-                            </thead>
+                    <div className={`bg-box rounded-lg p-5`}>
+                        <div className="table-wrp max-h-64 2xl:max-h-[18rem] w-full text-sm pr-5">
+                            <table className="w-full table-fixed">
+                                <thead className="sticky bg-box top-0">
+                                    <tr>
+                                        <th className="text-start pb-4">BLOCK</th>
+                                        {chartDisplay === "actualProof" && <th className="text-end pb-4 w-[110%]">PROOF TIME (sec.)</th>}
+                                        {chartDisplay === "l1" && <th className="text-end pb-4 w-[110%]">L1 BLOCK LATENCY (sec.)</th>}
+                                        {chartDisplay === "l2" && <th className="text-end pb-4 w-[110%]">L2 BLOCK LATENCY (sec.)</th>}
+                                    </tr>
+                                </thead>
 
-                            <tbody className="h-[18rem] text-white text-lg overflow-y-scroll Robo">
-                                {chartDisplay === "l2" && snBlockData?.detail && snBlockData?.detail.map((val:any, key:number) => {
-                                    return (
-                                            <tr key={key}>
-                                                <td className="text-start py-2">#{val?.block_number}</td>
-                                                <td className="text-end">{val?.blockLatency}</td>
-                                            </tr>
-                                    )
-                                })}
-                                {chartDisplay != "l2" && snProofData?.detail && snProofData?.detail.map((val:any, key:number) => {
-                                    return (
-                                            <tr key={key}>
-                                                <td className="text-start py-2">#{val?.block_number}</td>
-                                                {chartDisplay === "actualProof" && <td className="text-end">{val?.actualProofTime}</td>}
-                                                {chartDisplay === "l1" && <td className="text-end">{val?.blockL1CreationTime}</td>}
-                                            </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
+                                <tbody className="h-64 2xl:h-[18rem] text-white text-lg overflow-y-scroll Robo">
+                                    {chartDisplay === "l2" && snBlockData?.detail && snBlockData?.detail.map((val:any, key:number) => {
+                                        return (
+                                                <tr key={key}>
+                                                    <td className="text-start py-2">#{val?.block_number}</td>
+                                                    <td className="text-end">{val?.blockLatency}</td>
+                                                </tr>
+                                        )
+                                    })}
+                                    {chartDisplay != "l2" && snProofData?.detail && snProofData?.detail.map((val:any, key:number) => {
+                                        return (
+                                                <tr key={key}>
+                                                    <td className="text-start py-2">#{val?.block_number}</td>
+                                                    {chartDisplay === "actualProof" && <td className="text-end">{val?.actualProofTime}</td>}
+                                                    {chartDisplay === "l1" && <td className="text-end">{val?.blockL1CreationTime}</td>}
+                                                </tr>
+                                        )
+                                    })}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

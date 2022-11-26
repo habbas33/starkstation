@@ -1,10 +1,12 @@
 
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import dayjs from 'dayjs';
 import {ethers} from 'ethers';
 import { SpinnerCircular } from "spinners-react";
 import BlocksChart from './BlocksChart';
 import { AppContext } from '../../context/AppContext';
+import isBetween from 'dayjs/plugin/isBetween';
+dayjs.extend(isBetween)
 
 interface IData {
     time: string;
@@ -16,6 +18,7 @@ interface IChartData {
     time: string;
     sn_value?: number;
     eth_value: number;
+    price: number;
     percent_change?: number;
 }
 
@@ -33,7 +36,10 @@ export default function BlocksPanel(props: {
 }) {
     const {snDetailLoading, snBlockLoading, ethDetailLoading, snProofLoading, snDetailData, snBlockData, snProofData, ethDetailData, timeFrame, setTimeFrame } = props;
     const { network } = useContext(AppContext)
-    const [chartLoading, setChartLoading] = useState<boolean>(false);
+    const [chartALoading, setChartALoading] = useState<boolean>(false);
+    const [chartBLoading, setChartBLoading] = useState<boolean>(false);
+    const [chartCLoading, setChartCLoading] = useState<boolean>(false);
+    const [chartDone, setChartDone] = useState<boolean>(false);
     const [lastUpdated, setLastUpdated] = useState<any>(0);
     const [chartDisplay, setChartDisplay] = useState<string>('verificationCost');
     const [chartData, setChartData] = useState<IChartData[]>([]);
@@ -79,69 +85,92 @@ export default function BlocksPanel(props: {
     }, [ethDetailData]);
 
     useEffect(() => {
-        if (setAvgGasUsed_ETH.length && setAvgGasUsed_SN.length) {
-            setChartLoading(true);
-        }
-    }, [network,chartDisplay]);
+            setChartALoading(true);
+            setChartBLoading(true);
+            setChartCLoading(true);
+    }, [network]);
+
+  
+    const getAvgTxnFee = () => {
+        setChartALoading(true);
+        let _avgTxnFee: IChartData[] = []
+        avgTxnFee_ETH.forEach((v,i) => {
+            let snValue = avgTxnFee_SN.find((val) => val.time === v.time)
+            // let snValue = avgTxnFee_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+            _avgTxnFee[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:v.value, price:v.price}
+            if (snValue){
+                const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
+                _avgTxnFee[i].sn_value = sn_value;
+                _avgTxnFee[i].percent_change = sn_value/_avgTxnFee[i].eth_value;
+            }
+        });
+
+        setChartALoading(false);
+        setChartDone(false);
+
+        return _avgTxnFee;
+      };
+
+
+    const getAvgGasUsed = () => {
+        setChartBLoading(true);
+        let _avgGasUsed: IChartData[] = []
+        avgGasUsed_ETH.forEach((v,i) => {
+            let snValue = avgGasUsed_SN.find((val) => val.time === v.time)
+            // let snValue = avgGasUsed_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+            _avgGasUsed[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:v.value/10**9, price:v.price}
+            if (snValue){
+                _avgGasUsed[i].sn_value = snValue.value/10**9;
+                _avgGasUsed[i].percent_change = (snValue.value/10**9)/_avgGasUsed[i].eth_value;
+            }
+        });
+        
+        setChartBLoading(false);
+        setChartDone(false);
+        return _avgGasUsed;
+    };
+
+    const getAvgVerificationCost = () => {
+        setChartCLoading(true);
+        let _verificationCost: IChartData[] = []
+        avgBlockVerificationCost_SN.forEach((v,i) => {
+            if (v?.value != null) {
+                _verificationCost[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:0, price:v?.price}
+                _verificationCost[i].sn_value = v?.value;
+            }
+        });
+        setChartCLoading(false);
+        return _verificationCost;
+    };
+
+    const _avgTxnFee: IChartData[] = useMemo(() => getAvgTxnFee(), [avgTxnFee_ETH,avgTxnFee_SN]);
+    const _avgGasUsed: IChartData[] = useMemo(() => getAvgGasUsed(), [avgGasUsed_ETH,avgGasUsed_SN ]);
+    const _verificationCost: IChartData[] = useMemo(() => getAvgVerificationCost(), [avgBlockVerificationCost_SN]);
 
     useEffect(() => {
+        // setChartDone((prev) => !prev?false:false);
         if(chartDisplay){
-            // setChartLoading(true);
             switch(chartDisplay) {
                 case "avgTxnFee":
-                    let _avgTxnFee: IChartData[] = []
-                    avgTxnFee_ETH.forEach((v,i) => {
-                        let snValue = avgTxnFee_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
-                        _avgTxnFee[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
-                        if (snValue){
-                            const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
-                            _avgTxnFee[i].sn_value = sn_value;
-                            _avgTxnFee[i].percent_change = sn_value/_avgTxnFee[i].eth_value;
-                        }
-                    });
-                    setChartData(_avgTxnFee.reverse());
+                    setChartData(_avgTxnFee.slice().reverse());
                     break;
                 case "avgGasUsed":
-                    let _avgGasUsed: IChartData[] = []
-                    avgGasUsed_ETH.forEach((v,i) => {
-                        let snValue = avgGasUsed_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
-                        _avgGasUsed[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:v.value/10**9}
-                        if (snValue){
-                            _avgGasUsed[i].sn_value = snValue.value/10**9;
-                            _avgGasUsed[i].percent_change = (snValue.value/10**9)/_avgGasUsed[i].eth_value;
-                        }
-                    });
-                    setChartData(_avgGasUsed.reverse());
+                    setChartData(_avgGasUsed.slice().reverse());
                     break;
                 case "verificationCost":
-                    let _verificationCost: IChartData[] = []
-                    avgBlockVerificationCost_SN.forEach((v,i) => {
-                        _verificationCost[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:0}
-                        _verificationCost[i].sn_value = isCurrencyEth? v?.value : v?.value*v?.price;
-                    });
-                    setChartData(_verificationCost.reverse());
+                    setChartData(_verificationCost.slice().reverse());
                     break;   
                 default:
-                    let __avgTxnFee: IChartData[] = []
-                    avgTxnFee_ETH.forEach((v,i) => {
-                        let snValue = avgTxnFee_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
-                        __avgTxnFee[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
-                        if (snValue){
-                            const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
-                            __avgTxnFee[i].sn_value = sn_value;
-                            __avgTxnFee[i].percent_change = sn_value/__avgTxnFee[i].eth_value;
-                        }
-                    });
-                    setChartData(__avgTxnFee.reverse());
+                    setChartData(_avgTxnFee.slice().reverse());
             }
-            setChartLoading(false);
+            setChartDone((prev) => !prev);
         }
-    }, [chartDisplay,avgGasUsed_ETH, avgGasUsed_SN, isCurrencyEth]);
+    }, [chartDisplay, chartALoading, chartBLoading,chartCLoading, timeFrame, isCurrencyEth]);
 
     const handleTimeFrame = (period:string) => {
         setTimeFrame(period)
     }
-
+    const chartLoading = chartDisplay === "verificationCost" ? chartCLoading: chartDisplay === "avgGasUsed"? chartBLoading : chartALoading
     const totalTxnFeeLatest = snBlock?isCurrencyEth ? Number(ethers.utils.formatEther(snBlock?.avgTxnFee)).toFixed(9) : (Number(ethers.utils.formatEther(snBlock?.avgTxnFee)) * Number(snBlock?.ethPrice)).toFixed(6) : "0.00";
     const verificationCostLatest = snProof?isCurrencyEth ? Number(snProof?.blockVerificationCost).toFixed(9) : (Number(snProof?.blockVerificationCost) * Number(snProof?.ethPrice)).toFixed(6) : "0.00";
     return (
@@ -230,7 +259,7 @@ export default function BlocksPanel(props: {
                     {chartDisplay === "avgTxnFee" && <h1 className="text-gray-400 text-lg text-center py-5">AVERAGE FEE PER BLOCK ({currency.toUpperCase()})</h1>}
                     {chartDisplay === "avgGasUsed" && <h1 className="text-gray-400 text-lg text-center py-5">AVERAGE GAS USED PER BLOCK</h1>}
                     {chartDisplay === "verificationCost" && <h1 className="text-gray-400 text-lg text-center py-5">AVERAGE L1 BLOCK VERIFICATION COST ({currency.toUpperCase()})</h1>}
-                    <BlocksChart data={chartData} isLoading={snDetailLoading || ethDetailLoading || chartLoading} chartDisplay={chartDisplay} currency={currency} timeFrame={timeFrame}/>
+                    <BlocksChart data={chartData} isReady={chartDone} isLoading={snDetailLoading || ethDetailLoading || chartLoading} chartDisplay={chartDisplay} currency={currency} timeFrame={timeFrame}/>
                 </div>
                 <div className="flex order-last lg:order-none justify-between items-center text-sm">
                     <div>LATEST BLOCK: {snBlock?.block_number}</div> 

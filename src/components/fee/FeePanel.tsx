@@ -117,7 +117,8 @@ export default function FeePanel(props: {
                 case "ethTransferFee":
                     let _ethTransferData: IChartData[] = []
                     ethTransferData_ETH.forEach((v,i) => {
-                        let snValue = ethTransferData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+                        let snValue = ethTransferData_SN.find((val) => val.time === v.time)
+                        // let snValue = ethTransferData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         _ethTransferData[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
                         if (snValue){
                             const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
@@ -130,7 +131,8 @@ export default function FeePanel(props: {
                 case "usdcTransferFee":
                     let _usdcTransferData: IChartData[] = []
                     usdcTransferData_ETH.forEach((v,i) => {
-                        let snValue = usdcTransferData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+                        let snValue = usdcTransferData_SN.find((val) => val.time === v.time)
+                        // let snValue = usdcTransferData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         _usdcTransferData[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
                         if (snValue){
                             const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
@@ -143,7 +145,8 @@ export default function FeePanel(props: {
                 case "swapFee":
                     let _swapFeeData: IChartData[] = []
                     swapFeeData_ETH.forEach((v,i) => {
-                        let snValue = swapFeeData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+                        let snValue = swapFeeData_SN.find((val) => val.time === v.time)
+                        // let snValue = swapFeeData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         _swapFeeData[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
                         if (snValue){
                             const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
@@ -156,7 +159,8 @@ export default function FeePanel(props: {
                 case "nftMintFee":
                     let _nftMintFeeData: IChartData[] = []
                     nftMintFeeData_ETH.forEach((v,i) => {
-                        let snValue = nftMintFeeData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+                        let snValue = nftMintFeeData_SN.find((val) => val.time === v.time)
+                        // let snValue = nftMintFeeData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         _nftMintFeeData[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
                         if (snValue){
                             const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;
@@ -169,7 +173,8 @@ export default function FeePanel(props: {
                 default:
                     let __ethTransferData: IChartData[] = []
                     ethTransferData_ETH.forEach((v,i) => {
-                        let snValue = ethTransferData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+                        let snValue = ethTransferData_SN.find((val) => val.time === v.time)
+                        // let snValue = ethTransferData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         __ethTransferData[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
                         if (snValue){
                             const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;

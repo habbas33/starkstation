@@ -147,7 +147,8 @@ export default function BridgePanel(props: {
         if (bridgeWithdrawFeeData_ETH){
             let _withdrawData: IChartData[] = []
             bridgeWithdrawFeeData_ETH.forEach((v,i) => {
-                let snValue = initiateWithdrawFeeData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+                let snValue = initiateWithdrawFeeData_SN.find((val) => val.time === v.time)
+                // let snValue = initiateWithdrawFeeData_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') >= -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                 _withdrawData[i] = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:isCurrencyEth?v.value:v.value*v.price}
                 if (snValue){
                     const sn_value = isCurrencyEth?snValue?.value:snValue?.value*snValue?.price;

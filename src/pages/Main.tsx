@@ -89,7 +89,7 @@ const Main: React.FC = () => {
                     timeFrame = {timeFrame_latencyPanel}
                     setTimeFrame = {setTimeFrame_latencyPanel}
                 />
-            </div>
+            </div> 
         </div>
     );
 }

@@ -75,8 +75,9 @@ export default function TxnsPanel(props: {
                 case "tps":
                     let _avgTps: IChartData[] = []
                     avgTps_ETH.forEach((v,i) => {
+                        let snValue = avgTps_SN.find((val) => val.time === v.time)
                         // let snValue = avgTps_SN.find((val) => dayjs(val.time).format('MMM DD') ===  dayjs(v.time).format('MMM DD'))
-                        let snValue = avgTps_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') > -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+                        // let snValue = avgTps_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') > -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         const _entry: IChartData = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:v.value}
                         if (snValue){
                             _entry.sn_value = snValue?.value;
@@ -88,8 +89,8 @@ export default function TxnsPanel(props: {
                 case "tpb":
                     let _avgTpb: IChartData[] = []
                     avgTpb_ETH.forEach((v,i) => {
-                        // let snValue = avgTpb_SN.find((val) => val.time === v.time)
-                        let snValue = avgTpb_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') > -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+                        let snValue = avgTps_SN.find((val) => val.time === v.time)
+                        // let snValue = avgTpb_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') > -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         const _entry: IChartData = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:v.value}
                         // _avgTpb[i] = {time: v.time, eth_value:v.value}
                         if (snValue){
@@ -102,7 +103,8 @@ export default function TxnsPanel(props: {
                 default:
                     let __avgTps: IChartData[] = []
                     avgTps_ETH.forEach((v,i) => {
-                        let snValue = avgTps_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') > -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+                        let snValue = avgTps_SN.find((val) => val.time === v.time)
+                        // let snValue = avgTps_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') > -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                         const _entry: IChartData = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:v.value}
                         if (snValue){
                             _entry.sn_value = snValue?.value;

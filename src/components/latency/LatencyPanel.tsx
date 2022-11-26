@@ -102,7 +102,8 @@ export default function LatencyPanel(props: {
         if(avgBlockLatency_ETH){
             let _avgBlockLatency: IChartData[] = []
             avgBlockLatency_ETH.forEach((v,i) => {
-                let snValue = avgBlockLatency_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') > -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
+                let snValue = avgBlockLatency_SN.find((val) => val.time === v.time)
+                // let snValue = avgBlockLatency_SN.find((val) => dayjs(val.time).diff(dayjs(v.time),'hour') > -2 && dayjs(val.time).diff(dayjs(v.time),'hour') <=2)
                 const _entry: IChartData = {time: timeFrame === '1d' ? dayjs(v.time).format('MMM DD YYYY') : v.time, eth_value:v.value}
                 if (snValue){
                     _entry.sn_value = snValue?.value;

@@ -8,32 +8,32 @@ const headers = {
   "Content-Type": "application/json",
 };
 
-export const useEthBlocksQuery = () => {
-    const provider = new ethers.providers.InfuraProvider(
-      'mainnet',
-      APIKEY
-    );
-    const fetch = async () => {
-      const currentBlock = await provider.getBlock("latest");
+// export const useEthBlocksQuery = () => {
+//     const provider = new ethers.providers.InfuraProvider(
+//       'mainnet',
+//       APIKEY
+//     );
+//     const fetch = async () => {
+//       const currentBlock = await provider.getBlock("latest");
 
-      const blocks: { [key in string]: {timestamp:number,txnCount:number} } = {};
-      if (currentBlock.number !== null) { //only when block is mined not pending
-        const promises = [];
-        for (let i = 0; i<50; i++) {
-          promises.push(provider.getBlock(currentBlock.number-i));
-        }
-        Promise.all(promises).then ((results)=>{
+//       const blocks: { [key in string]: {timestamp:number,txnCount:number} } = {};
+//       if (currentBlock.number !== null) { //only when block is mined not pending
+//         const promises = [];
+//         for (let i = 0; i<50; i++) {
+//           promises.push(provider.getBlock(currentBlock.number-i));
+//         }
+//         Promise.all(promises).then ((results)=>{
             
-            Object.keys(results).forEach((blockKey:any) => {
-              blocks[blockKey] = {timestamp:results[blockKey]["timestamp"]*1000 ,txnCount:results[blockKey].transactions.length};
-            });
-        }) 
-      } 
-      return blocks;
-    }
+//             Object.keys(results).forEach((blockKey:any) => {
+//               blocks[blockKey] = {timestamp:results[blockKey]["timestamp"]*1000 ,txnCount:results[blockKey].transactions.length};
+//             });
+//         }) 
+//       } 
+//       return blocks;
+//     }
   
-    return useQuery<{ [key in string]: {timestamp:number,txnCount:number} }>('useEthBlocksQuery', fetch);
-  };
+//     return useQuery<{ [key in string]: {timestamp:number,txnCount:number} }>('useEthBlocksQuery', fetch);
+//   };
 
   export const useEthDetailQuery4h = () => {
     const fetch = async () => {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
-import { getBridgeFee } from "../../services/stark";
+// import { getBridgeFee } from "../../services/stark";
 import BridgeChart from './BridgeChart';
 import { PriceContext } from '../../context/PriceContext';
 import { AppContext } from '../../context/AppContext';

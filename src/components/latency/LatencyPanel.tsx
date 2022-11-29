@@ -125,7 +125,7 @@ export default function LatencyPanel(props: {
             <h1 className="text-lg py-1 text-gray-400 text-center"></h1>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 my-8 text-gray-400 drop-shadow-2xl">
                 <div onClick={()=>setChartDisplay('actualProof')} className={`bg-box text-center rounded-lg p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "actualProof" ? "border-4 border-sky-900" : ""}`}>
-                    <span className= "text-xs sm:text-sm 2xl:text-lg">ACTUAL PROOF TIME (SECONDS)</span>
+                    <span className= "text-xs sm:text-sm 2xl:text-lg">PROOF GENERATION TIME (SECONDS)</span>
                     <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
                         {!snBlockLoading ? 
                             <> {snProof?.actualProofTime.toFixed(2)} </> 
@@ -197,7 +197,8 @@ export default function LatencyPanel(props: {
                     </div>
                 </div>
                 <div className="flex flex-col justify-between order-2 lg:order-none py-5 px-0 2xl:p-5 bg-box rounded-lg bg-gradient-to-br from-[#0d1b3d] via-[#081128] to-transparent">
-                     <h1 className="text-gray-400 text-lg text-center py-5">AVERAGE BLOCK LATENCY</h1>
+                    {chartDisplay === "actualProof" && <h1 className="text-gray-400 text-lg text-center py-5">AVERAGE PROOF GENERATION TIME</h1>}
+                    {chartDisplay != "actualProof" && <h1 className="text-gray-400 text-lg text-center py-5">AVERAGE BLOCK LATENCY</h1>}
                     <LatencyChart data={chartData} isLoading={snDetailLoading || ethDetailLoading || chartLoading} chartDisplay={"blockLatency"} timeFrame={timeFrame}/>
                 </div>
                 <div className="flex flex-col justify-between order-3 lg:order-none py-5 px-0 2xl:p-5 bg-box rounded-lg bg-gradient-to-br from-[#0d1b3d] via-[#081128] to-transparent">

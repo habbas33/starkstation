@@ -71,7 +71,7 @@ export default function LatencyChart(props: {
                         interval="preserveEnd"
                         fontSize={10}
                         fontFamily='Roboto Mono, monospace'
-                        stroke="#81cefa"
+                        stroke="#fb7185"
                         padding={{ top: 20, bottom: 5 }}
                         />
                     }

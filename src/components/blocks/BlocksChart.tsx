@@ -44,7 +44,7 @@ export default function BlocksChart(props: {
         }
         
       }
-    }, [isReady, currency, chartDisplay])
+    }, [isReady, currency, chartDisplay, timeFrame])
     
 
     const displayUnit = chartDisplay === "avgGasUsed" ? "Gwei" : currency.toUpperCase()
@@ -119,7 +119,7 @@ export default function BlocksChart(props: {
                         interval="preserveEnd"
                         fontSize={10}
                         fontFamily='Roboto Mono, monospace'
-                        stroke="#81cefa"
+                        stroke={isL1CostChart || (!legendState[1] && legendState[0]) ? "#fb7185" : !legendState[1] ? "#b9b72b" : "#81cefa" }
                         padding={{ top: 20, bottom: 5 }}
                     />
                     <YAxis
@@ -135,7 +135,7 @@ export default function BlocksChart(props: {
                         interval="preserveStartEnd"
                         fontSize={10}
                         fontFamily='Roboto Mono, monospace'
-                        stroke="#81cefa"
+                        stroke={legendState[2]?"#b9b72b":"#fb7185"}
                         padding={{ top: 20, bottom: 5 }}
                     />
                     <Tooltip

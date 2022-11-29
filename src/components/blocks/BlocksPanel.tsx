@@ -165,7 +165,7 @@ export default function BlocksPanel(props: {
             }
             setChartDone((prev) => !prev);
         }
-    }, [chartDisplay, chartALoading, chartBLoading,chartCLoading, timeFrame, isCurrencyEth]);
+    }, [chartDisplay, chartALoading, chartBLoading, chartCLoading, timeFrame, isCurrencyEth]);
 
     const handleTimeFrame = (period:string) => {
         setTimeFrame(period)

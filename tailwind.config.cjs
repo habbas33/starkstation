@@ -14,7 +14,9 @@ module.exports = {
         'box-hover':'#0d1b3d'
       },
       screens: {
+        'xs': '400px',
         mf: "990px",
+        '3xl': '1600px',
       },
       keyframes: {
         "slide-in": {

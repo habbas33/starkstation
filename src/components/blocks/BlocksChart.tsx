@@ -4,25 +4,25 @@ import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Symbols, Surface } from 'recharts';
 import Numeral from 'numeral';
-import { useMediaQuery } from 'react-responsive'
 import { AppContext } from '../../context/AppContext';
 
-export default function FeeChart(props: {
+export default function BlocksChart(props: {
     data:any
     isLoading:boolean
+    isReady:boolean
     chartDisplay:string
     currency:string
     timeFrame:string
 }) {
-    const { data, isLoading, chartDisplay, currency, timeFrame } = props;
-    const [chartData, setChartData] = useState<any>([])    
+    const { data, isLoading, chartDisplay, currency, timeFrame, isReady } = props;
+    const [chartData, setChartData] = useState<any>([])
     const [legendState, setLegendState] = useState<boolean[]>([true,true,true])
 
     useEffect(() => {
-      if (data) {
+      if (data ) {
         let uniqueTimeFrames:any = [];
         const _chartData = data.filter((item:any) => {
-            const sn_value_exists = Object.keys(item).filter((key) => key.includes('sn_value')).length
+            const sn_value_exists = Object.keys(item).filter((key) => key.includes('sn_value')).length && item?.sn_value != null
             const isDuplicate = uniqueTimeFrames.includes(item.time);
             if (!isDuplicate && sn_value_exists) {
                 uniqueTimeFrames.push(item.time);
@@ -30,19 +30,34 @@ export default function FeeChart(props: {
             }
             return false;
         })
-        setChartData(_chartData)
+
+        if (currency != "eth" && chartDisplay != 'avgGasUsed') {
+            const __chartData = _chartData.map((item:any) => ({
+                time : item.time,
+                sn_value : item.sn_value * item.price,
+                eth_value : item.eth_value * item.price,
+                percent_change : (item.sn_value * item.price)/(item.eth_value * item.price)
+            }))
+            setChartData(__chartData)
+        } else {
+            setChartData(_chartData)
+        }
+        
       }
-    }, [data])
+    }, [isReady, currency, chartDisplay, timeFrame])
     
-    const displayUnit = currency.toUpperCase()
+
+    const displayUnit = chartDisplay === "avgGasUsed" ? "Gwei" : currency.toUpperCase()
     const onlyY0 = legendState.filter(v => v).length === 1;
+    const isL1CostChart = chartDisplay === "verificationCost" ? true : false
+    const marginLeft = 5//chartDisplay === "verificationCost" || onlyY0 ? 45 : 5
     
     const handleClick = (index:number) => {
         if (legendState) {
             const _legendState = legendState.map(a => {return a});
             _legendState[index] = !_legendState[index]
             
-            if ( _legendState.includes(true)) {
+            if ( !isL1CostChart && _legendState.includes(true)) {
                 setLegendState(_legendState);
             }
         } 
@@ -51,7 +66,7 @@ export default function FeeChart(props: {
     const renderLegend = (props:any) => {
         const { payload } = props;
         return (
-          <div className="flex text-xs xs:text-base justify-center items-center ">
+          <div className="flex text-xs xs:text-base justify-center items-center">
             {
               payload.map((entry:any, index:any) => (
                 <div onClick={()=>handleClick(index)} key={`item-${index}`} className={`flex justify-center items-center text-[${entry.color}] cursor-pointer hover:bg-gray-900 ${legendState[index]?"":'opacity-25'} rounded-md mx-1 px-1`}>
@@ -65,16 +80,9 @@ export default function FeeChart(props: {
           </div>
         );
     }
-    const isXsScreen = useMediaQuery({ minWidth: 600 })
-    const swapFeeLedgendSn = !isXsScreen ? "My Swap":"on Starknet (My Swap)"
-    const swapFeeLedgendEth = !isXsScreen ? "UniswapV2":"on Ethereum (UniswapV2)"
-    const mintFeeLedgendSn = !isXsScreen ? "Mint Square":"on Starknet (Mint Square)"
-    const mintFeeLedgendEth = !isXsScreen ? "Rarible":"on Ethereum (Rarible)"
-    const snLegendName =  chartDisplay === "swapFee" ? swapFeeLedgendSn :chartDisplay === "nftMintFee" ? mintFeeLedgendSn: "on Starknet";
-    const ethLegendName = chartDisplay === "swapFee" ? swapFeeLedgendEth :chartDisplay === "nftMintFee" ? mintFeeLedgendEth: "on Ethereum";
 
     return (
-        <div className={`h-[300px] 2xl:h-[400px] drop-shadow-xl w-full rounded-3xl rounded-2xl  self-end`}>
+        <div className={`h-[240px] drop-shadow-xl w-full rounded-3xl rounded-2xl  self-end`}>
             {!isLoading && data.length ? (
                 <ResponsiveContainer width="100%" height="100%">
                 <LineChart
@@ -84,7 +92,7 @@ export default function FeeChart(props: {
                     margin={{
                         top: 5,
                         right: 5,
-                        left: 5,
+                        left: marginLeft,
                         bottom: 5,
                     }}
                 >
@@ -102,7 +110,7 @@ export default function FeeChart(props: {
                     />
                     <YAxis
                         yAxisId={0}
-                        dataKey= {!legendState[1] && legendState[0] ? "sn_value" : !legendState[1] ? "percent_change" : "eth_value" }
+                        dataKey= {isL1CostChart || (!legendState[1] && legendState[0]) ? "sn_value" : !legendState[1] ? "percent_change" : "eth_value" }
                         axisLine={true}
                         tickLine={false}
                         type="number"
@@ -111,12 +119,12 @@ export default function FeeChart(props: {
                         interval="preserveEnd"
                         fontSize={10}
                         fontFamily='Roboto Mono, monospace'
-                        stroke={!legendState[1] && legendState[0] ? "#fb7185" : !legendState[1] ? "#b9b72b" : "#81cefa"}
+                        stroke={isL1CostChart || (!legendState[1] && legendState[0]) ? "#fb7185" : !legendState[1] ? "#b9b72b" : "#81cefa" }
                         padding={{ top: 20, bottom: 5 }}
                     />
                     <YAxis
+                        hide= {isL1CostChart || onlyY0}
                         yAxisId={1}
-                        hide= {onlyY0}
                         dataKey={legendState[2]?"percent_change":"sn_value"}
                         domain={legendState[2]?[0, 1]:[0, 'auto']}
                         axisLine={true}
@@ -134,13 +142,13 @@ export default function FeeChart(props: {
                         cursor={true}
                         active={false}
                         //@ts-ignore
-                        content={<CustomTooltip timeFrame={timeFrame} displayUnit={displayUnit} legendState={legendState} snLegendName={snLegendName} ethLegendName={ethLegendName}/>}
+                        content={<CustomTooltip timeFrame={timeFrame} displayUnit={displayUnit} isL1CostChart={isL1CostChart} legendState={legendState}/>}
                         wrapperStyle={{ top: -70, left: -10, outline: 'none' }}
                     />
-                    <Legend content={renderLegend}/>
-                    <Line type="monotone" yAxisId={legendState[2]?0:1} hide={!legendState[0]} name={snLegendName} dataKey="sn_value" animationDuration={500} isAnimationActive={true} legendType="star" stroke={'#fb7185'} strokeWidth={2} dot={false}  />
-                    <Line type="monotone" yAxisId={0} hide={!legendState[1]} name={ethLegendName} dataKey="eth_value" animationDuration={500} isAnimationActive={true} legendType="diamond" stroke={'#23a6f1'} strokeWidth={2} dot={false}  />
-                    <Line type="monotone" yAxisId={onlyY0?0:1} hide={!legendState[2]} name="L2 vs L1" dataKey="percent_change" animationDuration={500} isAnimationActive={true} legendType="wye" stroke={'#b9b72b'} strokeDasharray="5 5" strokeWidth={1} dot={false}  />
+                    {!isL1CostChart ? <Legend content={renderLegend}/> : <Legend />}
+                    <Line type="monotone" hide={!legendState[0]} yAxisId={legendState[2]?0:1} name= {!isL1CostChart?"on Starknet":"Starknet"} dataKey="sn_value" animationDuration={500} isAnimationActive={true} legendType="star" stroke={'#fb7185'} strokeWidth={2} dot={false}/>
+                    {!isL1CostChart && <Line hide={!legendState[1]} type="monotone" yAxisId={0} name="on Ethereum" dataKey="eth_value" animationDuration={500} isAnimationActive={true} legendType="diamond" stroke={'#23a6f1'} strokeWidth={2} dot={false}  />}
+                    {!isL1CostChart && <Line hide={!legendState[2]} type="monotone" yAxisId={onlyY0?0:1} name="L2 vs L1" dataKey="percent_change" animationDuration={500} isAnimationActive={true} legendType="wye" stroke={'#b9b72b'} strokeDasharray="5 5" strokeWidth={1} dot={false}  />}
                 </LineChart>
                 </ResponsiveContainer>
             ) : (
@@ -158,13 +166,15 @@ export default function FeeChart(props: {
     );
 }
 
-const CustomTooltip = (props:{ active:any, payload:any, label:any, timeFrame:string, displayUnit:string, snLegendName:string, ethLegendName:string, legendState:boolean[] }) => {
-    const {active, payload, label, timeFrame, displayUnit, legendState, ethLegendName, snLegendName} = props;
+
+
+const CustomTooltip = (props:{ active:any, payload:any, label:any, timeFrame:string, displayUnit:string, isL1CostChart:boolean, legendState:boolean[] }) => {
+    const {active, payload, label, timeFrame, displayUnit, isL1CostChart, legendState} = props;
     const { network } = useContext(AppContext)
     if (active && payload && payload.length) {
         const date = toNiceDateYear(label, timeFrame)
         const snValue = toNiceValue(payload[0]?.value, displayUnit, network)
-        const ethValue = toNiceValue(payload[legendState[0] && legendState[1] ? 1 : 0]?.value, displayUnit, network)
+        const ethValue = !isL1CostChart ? toNiceValue(payload[legendState[0] && legendState[1] ? 1 : 0]?.value, displayUnit, network) : '0'
         const l2vsl1 = toK_percent_float(payload[legendState[0] && legendState[1] ? 2 : !legendState[0] && !legendState[1] ? 0 : 1]?.value)
       return (
         <div className="custom-tooltip" style={{
@@ -175,10 +185,17 @@ const CustomTooltip = (props:{ active:any, payload:any, label:any, timeFrame:str
                 color: '#fff',
                 fontSize: '12px',
             }}>
-          <p style={{ paddingTop: 4, paddingBottom: 4 }}>{date}</p>
-          {legendState[0] && <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#fb7185]">{`${snLegendName} : ${snValue}`}</p>}
-          {legendState[1] && <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#23a6f1]">{`${ethLegendName} : ${ethValue}`}</p>}
-          {legendState[2] && <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#b9b72b]">{`L2 vs L1 : ${l2vsl1}`}</p>}
+            <p style={{ paddingTop: 4, paddingBottom: 4 }}>{date}</p>
+            {!isL1CostChart ? 
+                (<>
+                    {legendState[0] && <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#fb7185]">{`on Starknet : ${snValue}`}</p>}
+                    {legendState[1] && <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#23a6f1]">{`on Ethereum : ${ethValue}`}</p>}
+                    {legendState[2] && <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#b9b72b]">{`L2 vs L1 : ${l2vsl1}`}</p>}
+                </>)
+                :( <>
+                    <p style={{ paddingTop: 4, paddingBottom: 4 }} className="text-[#fb7185]">{`Verification Cost : ${snValue}`}</p>
+                </>)
+            }
         </div>
       );
     }

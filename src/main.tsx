@@ -5,7 +5,7 @@ import './App.css'
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 const queryClient = new QueryClient();
-window.open("https://starkstation.voyager.online", "_self");
+
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   
   <QueryClientProvider client={queryClient}>

@@ -19,7 +19,7 @@ export default function Footer() {;
                             <a href="https://gojuno.xyz/" target="_blank">Juno</a>
                         </div>
                         <div className='my-2 cursur-pointer hover:text-gray-500'>
-                            <a href="https://github.com/NethermindEth/warp" target="_blank">Wrap</a>
+                            <a href="https://github.com/NethermindEth/warp" target="_blank">Warp</a>
                         </div>
                     </div>
                 </div>
@@ -41,7 +41,10 @@ export default function Footer() {;
                     <h1 className="font-semibold">LEGAL</h1>
                     <div  className='sm:mt-2'>
                         <div className='text-start my-2 cursur-pointer hover:text-gray-500'>
-                            <NavLink to="/disclaimer">Disclaimer</NavLink>
+                            <NavLink to="/terms-of-use">Terms of Use</NavLink>
+                        </div>
+                        <div className='text-start my-2 cursur-pointer hover:text-gray-500'>
+                            <NavLink to="/disclaimer">*Disclaimer</NavLink>
                         </div>
                     </div>
                 </div>

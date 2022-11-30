@@ -9,43 +9,29 @@ import { AppContext } from '../../context/AppContext';
 export default function BlocksChart(props: {
     data:any
     isLoading:boolean
-    isReady:boolean
     chartDisplay:string
     currency:string
     timeFrame:string
 }) {
-    const { data, isLoading, chartDisplay, currency, timeFrame, isReady } = props;
+    const { data, isLoading, chartDisplay, currency, timeFrame } = props;
     const [chartData, setChartData] = useState<any>([])
     const [legendState, setLegendState] = useState<boolean[]>([true,true,true])
-
+   
     useEffect(() => {
-      if (data ) {
-        let uniqueTimeFrames:any = [];
-        const _chartData = data.filter((item:any) => {
-            const sn_value_exists = Object.keys(item).filter((key) => key.includes('sn_value')).length && item?.sn_value != null
-            const isDuplicate = uniqueTimeFrames.includes(item.time);
-            if (!isDuplicate && sn_value_exists) {
-                uniqueTimeFrames.push(item.time);
-                return true;
-            }
-            return false;
-        })
-
-        if (currency != "eth" && chartDisplay != 'avgGasUsed') {
-            const __chartData = _chartData.map((item:any) => ({
-                time : item.time,
-                sn_value : item.sn_value * item.price,
-                eth_value : item.eth_value * item.price,
-                percent_change : (item.sn_value * item.price)/(item.eth_value * item.price)
-            }))
-            setChartData(__chartData)
-        } else {
-            setChartData(_chartData)
+        if (data) {
+          let uniqueTimeFrames:any = [];
+          const _chartData = data.filter((item:any) => {
+              const sn_value_exists = Object.keys(item).filter((key) => key.includes('sn_value')).length && item?.sn_value != null
+              const isDuplicate = uniqueTimeFrames.includes(item.time);
+              if (!isDuplicate && sn_value_exists) {
+                  uniqueTimeFrames.push(item.time);
+                  return true;
+              }
+              return false;
+          })
+          setChartData(_chartData)
         }
-        
-      }
-    }, [isReady, currency, chartDisplay, timeFrame])
-    
+      }, [data])
 
     const displayUnit = chartDisplay === "avgGasUsed" ? "Gwei" : currency.toUpperCase()
     const onlyY0 = legendState.filter(v => v).length === 1;

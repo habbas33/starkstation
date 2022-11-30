@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
-// import { getEthTransferFee } from "../../services/stark";
 import FeeChart from './FeeChart';
 import { PriceContext } from '../../context/PriceContext';
 import { AppContext } from '../../context/AppContext';
@@ -72,11 +71,11 @@ export default function FeePanel(props: {
         return () => clearInterval(interval);
     }, [snBlockData]);
 
-    useEffect(() => {
-        if (feeEstimate) {
-            setChartLoading(false);
-        }
-    }, [feeEstimate]);
+    // useEffect(() => {
+    //     if (feeEstimate) {
+    //         setChartLoading(false);
+    //     }
+    // }, [feeEstimate]);
 
     useEffect(() => {
         if (ethTransferData_SN.length && usdcTransferData_SN.length) {
@@ -184,7 +183,7 @@ export default function FeePanel(props: {
                     });
                     setChartData(__ethTransferData.reverse());
             }
-            // setChartLoading(false);
+            setChartLoading(false);
         }
     }, [chartDisplay,nftMintFeeData_ETH, nftMintFeeData_SN, isCurrencyEth]);
 
@@ -196,7 +195,6 @@ export default function FeePanel(props: {
     const erc20TransferFeeLatest = isCurrencyEth ? feeEstimate?.erc20TransferFee : (Number(feeEstimate?.erc20TransferFee) * ethPrice).toFixed(6);
     const swapFeeFeeLatest = isCurrencyEth ? feeEstimate?.swapFee : (Number(feeEstimate?.swapFee) * ethPrice).toFixed(6); //fix
     const nftMintFeeLatest = isCurrencyEth ? feeEstimate?.nftMintFee : (Number(feeEstimate?.nftMintFee) * ethPrice).toFixed(6); //fix
-    // const totalTxnFeeLatest = snBlock?isCurrencyEth ? Number(ethers.utils.formatEther(snBlock?.avgTxnFee)).toFixed(9) : (Number(ethers.utils.formatEther(snBlock?.avgTxnFee)) * ethPrice).toFixed(6) : "0.00";
     return (
         <div>
             <h1 className="text-2xl text-white text-center">Fee Tracker</h1>
@@ -207,7 +205,7 @@ export default function FeePanel(props: {
                         <span className='text-xs sm:text-sm 2xl:text-lg'>USDC TRANSFER FEE</span>
                         <span className='hidden sm:inline text-xs sm:text-sm 2xl:text-lg'> (ERC20)</span>
                         <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
-                            {!snBlockLoading && !chartLoading? 
+                            {!snBlockLoading? 
                                 <> {erc20TransferFeeLatest} {currency.toUpperCase()} </> 
                                 :
                                 <div className= "flex justify-center 2xl:py-0.5">
@@ -219,7 +217,7 @@ export default function FeePanel(props: {
                     <div onClick={()=>setChartDisplay('ethTransferFee')} className={`bg-box rounded-lg p-3 px-4 2xl:p-5 cursor-pointer hover:bg-box-hover active:bg-box-active ${chartDisplay === "ethTransferFee" ? "border-4 border-sky-900" : ""}`}>
                         <span className='text-xs sm:text-sm 2xl:text-lg'>ETH TRANSFER FEE</span>
                         <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
-                            {!snBlockLoading  && !chartLoading? 
+                            {!snBlockLoading ? 
                                 <> {ethTranferFeeLatest} {currency.toUpperCase()} </> 
                                 :
                                 <div className= "flex justify-center 2xl:py-0.5">
@@ -232,7 +230,7 @@ export default function FeePanel(props: {
                         <span className='text-xs sm:text-sm 2xl:text-lg'>SWAP FEE</span>
                         <span className='hidden sm:inline text-xs sm:text-sm 2xl:text-lg'> (MY SWAP)</span>
                         <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
-                            {!snBlockLoading  && !chartLoading? 
+                            {!snBlockLoading ? 
                                 <> {swapFeeFeeLatest} {currency.toUpperCase()} </> 
                                 :
                                 <div className= "flex justify-center 2xl:py-0.5">
@@ -245,7 +243,7 @@ export default function FeePanel(props: {
                         <span className='text-xs sm:text-sm 2xl:text-lg'>NFT MINT FEE</span>
                         <span className='hidden sm:inline text-xs sm:text-sm 2xl:text-lg'> (MINT SQUARE)</span>
                         <h1 className='text-gray-300 Robo text-xs sm:text-xl 2xl:text-2xl py-1 2xl:py-2'>
-                            {!snBlockLoading  && !chartLoading? 
+                            {!snBlockLoading ? 
                                 <> {nftMintFeeLatest} {currency.toUpperCase()} </> 
                                 :
                                 <div className= "flex justify-center 2xl:py-0.5">

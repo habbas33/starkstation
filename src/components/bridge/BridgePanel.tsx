@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import dayjs from 'dayjs';
 import { SpinnerCircular } from "spinners-react";
-// import { getBridgeFee } from "../../services/stark";
 import BridgeChart from './BridgeChart';
 import { PriceContext } from '../../context/PriceContext';
 import { AppContext } from '../../context/AppContext';
@@ -81,7 +80,6 @@ export default function BridgePanel(props: {
             // const x = await getBridgeFee(network)
             // const initiateWithdrawFee = x.initiateWithdrawFee;
             setInitiateWithdrawFeeLatest(initiateWithdrawFee); 
-            setChartLoading(false);  
         }
         getFeeEstimate();
         refetch();
@@ -102,9 +100,7 @@ export default function BridgePanel(props: {
     }, [initiateWithdrawFeeLatest, withdrawFeeLatest, isCurrencyEth]);
 
     useEffect(() => {
-        if (initiateWithdrawFeeData_SN.length && bridgeWithdrawFeeData_ETH.length && bridgeDepositFeeData_ETH.length) {
-            setChartLoading(true);
-        }
+        setChartLoading(true);
     }, [network]);
 
     useEffect(() => {
@@ -157,6 +153,7 @@ export default function BridgePanel(props: {
                 }
             });
             setWithdrawChartData(_withdrawData.reverse());
+            setChartLoading(false);  
         }
         
     }, [bridgeWithdrawFeeData_ETH, initiateWithdrawFeeData_SN, isCurrencyEth]);
